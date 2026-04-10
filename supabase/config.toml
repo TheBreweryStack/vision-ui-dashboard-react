@@ -1,0 +1,76 @@
+project_id = "axvogllmehhrnkdgzeoi"
+
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.check-subscription]
+verify_jwt = false
+
+[functions.customer-portal]
+verify_jwt = false
+
+[functions.alpha-vantage]
+verify_jwt = false
+
+[functions.email-ingest-wealthsimple]
+verify_jwt = false
+
+[functions.finnhub-quote]
+verify_jwt = false
+
+[functions.market-overview]
+verify_jwt = false
+
+[functions.enrich-trade]
+verify_jwt = false
+
+[functions.generate-ai-insights]
+verify_jwt = false
+
+[functions.trial-expiry]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.check-due-reminders]
+verify_jwt = false
+
+[functions.contact-support]
+verify_jwt = false
+
+[functions.stripe-sales]
+verify_jwt = false
+
+[functions.admin-update-email]
+verify_jwt = false
+
+[functions.check-price-alerts]
+verify_jwt = false
+
+[functions.link-preview]
+verify_jwt = false
+
+[functions.fetch-market-news]
+verify_jwt = false
+
+[functions.finnhub-websocket-proxy]
+verify_jwt = false
+
+[functions.send-test-push]
+verify_jwt = false
+
+[functions.generate-vapid-keys]
+verify_jwt = false
+
+[functions.setup-totp]
+verify_jwt = false
+
+[functions.verify-totp]
+verify_jwt = false
+
+[functions.check-trusted-device]
+verify_jwt = false
+
+[functions.admin-reset-2fa]
+verify_jwt = false

@@ -1,15 +1,61 @@
 {
-  "short_name": "Vision UI Dashboard",
-  "name": "Vision UI Dashboard React",
+  "name": "TraderCafé",
+  "short_name": "TraderCafé",
+  "description": "Track your trades, analyze performance, and grow as a trader",
+  "theme_color": "#080a0f",
+  "background_color": "#080a0f",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "favicon.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/png"
+      "src": "/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#17c1e8",
-  "background_color": "#ffffff"
+  "categories": ["finance", "productivity"],
+  "lang": "en",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "New Trade",
+      "short_name": "Trade",
+      "url": "/journal?new=true",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Watchlists",
+      "short_name": "Watch",
+      "url": "/watchlist",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "url": "/analytics",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    }
+  ]
 }
