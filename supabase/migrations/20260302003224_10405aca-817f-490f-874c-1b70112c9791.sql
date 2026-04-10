@@ -1,0 +1,1 @@
+ALTER TABLE account_settings ADD COLUMN dashboard_layout jsonb DEFAULT NULL;
