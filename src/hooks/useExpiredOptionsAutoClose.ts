@@ -24,6 +24,35 @@ export function useExpiredOptionsAutoClose(
     setExpiredOptions(expired);
   }, [groups]);
 
+  const handleCloseAll = useCallback(async () => {
+    if (isProcessing || expiredOptions.length === 0) return;
+
+    setIsProcessing(true);
+    let closed = 0;
+
+    try {
+      for (const group of expiredOptions) {
+        const expDate = group.expiration_date
+          ? new Date(`${group.expiration_date}T00:00:00`)
+          : new Date();
+
+        await closePosition(
+          group.id,
+          group.remaining_qty,
+          0, // Close at $0
+          expDate
+        );
+        closed++;
+      }
+
+      toast.success(`Closed ${closed} expired option${closed !== 1 ? 's' : ''} at $0`);
+    } catch (error) {
+      toast.error(`Failed to close some options. ${closed} of ${expiredOptions.length} closed.`);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [expiredOptions, closePosition, isProcessing]);
+
   // Check on Monday if there are expired options to close
   useEffect(() => {
     const today = new Date();
@@ -54,36 +83,7 @@ export function useExpiredOptionsAutoClose(
 
     // Mark as shown (but not processed) so we don't spam the user
     localStorage.setItem(weekKey, 'shown');
-  }, [expiredOptions]);
-
-  const handleCloseAll = useCallback(async () => {
-    if (isProcessing || expiredOptions.length === 0) return;
-
-    setIsProcessing(true);
-    let closed = 0;
-
-    try {
-      for (const group of expiredOptions) {
-        const expDate = group.expiration_date 
-          ? new Date(`${group.expiration_date}T00:00:00`) 
-          : new Date();
-        
-        await closePosition(
-          group.id,
-          group.remaining_qty,
-          0, // Close at $0
-          expDate
-        );
-        closed++;
-      }
-
-      toast.success(`Closed ${closed} expired option${closed !== 1 ? 's' : ''} at $0`);
-    } catch (error) {
-      toast.error(`Failed to close some options. ${closed} of ${expiredOptions.length} closed.`);
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [expiredOptions, closePosition, isProcessing]);
+  }, [expiredOptions, handleCloseAll]);
 
   const closeExpiredOption = useCallback(async (group: TradeGroupWithFills) => {
     if (!isExpiredOption(group)) return;

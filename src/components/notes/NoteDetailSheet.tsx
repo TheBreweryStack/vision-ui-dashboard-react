@@ -65,6 +65,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
   const [showPreview, setShowPreview] = useState(false);
   const [isSaved, setIsSaved] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const fetchedLinksRef = useRef<Set<string>>(new Set());
 
   // Load note data
   useEffect(() => {
@@ -76,6 +77,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
       setImages(note.images || []);
       setLinks(note.links || []);
       setLinkPreviews({});
+      fetchedLinksRef.current = new Set();
       setIsSaved(true);
     }
   }, [note]);
@@ -84,20 +86,21 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
   useEffect(() => {
     const fetchPreviews = async () => {
       for (const link of links) {
-        if (linkPreviews[link]) continue;
-        
+        if (fetchedLinksRef.current.has(link)) continue;
+        fetchedLinksRef.current.add(link);
+
         try {
           // Set initial preview with just the hostname
           setLinkPreviews(prev => ({
             ...prev,
             [link]: { url: link, title: new URL(link).hostname }
           }));
-          
+
           // Call edge function for full preview with AI summary
           const { data, error } = await supabase.functions.invoke('link-preview', {
             body: { url: link }
           });
-          
+
           if (!error && data) {
             setLinkPreviews(prev => ({
               ...prev,
@@ -116,7 +119,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
         }
       }
     };
-    
+
     if (links.length > 0) {
       fetchPreviews();
     }

@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
@@ -16,6 +17,15 @@ import { logger } from '@/lib/logger';
 export const useTradeGroupMutations = (onSuccess?: () => void) => {
   const { user } = useAuth();
   const { activePortfolioId } = usePortfolios();
+  const queryClient = useQueryClient();
+
+  // Invalidate all trade-related caches after mutations
+  const invalidateTradeQueries = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
+    queryClient.invalidateQueries({ queryKey: ['journal-data'] });
+    queryClient.invalidateQueries({ queryKey: ['trade-groups'] });
+    queryClient.invalidateQueries({ queryKey: ['trades'] });
+  }, [queryClient]);
 
   // Find matching open group for a trade (for DCA / averaging into positions)
   const findMatchingOpenGroup = useCallback(async (params: {
@@ -113,13 +123,14 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
 
       if (fillError) throw fillError;
 
+      invalidateTradeQueries();
       onSuccess?.();
       return { error: null };
     } catch (error) {
       logger.error('Error adding to position:', error);
       return { error: error as Error };
     }
-  }, [user, onSuccess]);
+  }, [user, onSuccess, invalidateTradeQueries]);
 
   // Close position (partial or full)
   const closePosition = useCallback(async (
@@ -196,13 +207,14 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
 
       if (fillError) throw fillError;
 
+      invalidateTradeQueries();
       onSuccess?.();
       return { error: null };
     } catch (error) {
       logger.error('Error closing position:', error);
       return { error: error as Error };
     }
-  }, [user, onSuccess]);
+  }, [user, onSuccess, invalidateTradeQueries]);
 
   // Update group metadata
   const updateGroup = useCallback(async (
@@ -217,13 +229,14 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
 
       if (error) throw error;
 
+      invalidateTradeQueries();
       onSuccess?.();
       return { error: null };
     } catch (error) {
       logger.error('Error updating trade group:', error);
       return { error: error as Error };
     }
-  }, [onSuccess]);
+  }, [onSuccess, invalidateTradeQueries]);
 
   // Delete group and all its fills
   const deleteGroup = useCallback(async (groupId: string): Promise<{ error: Error | null }> => {
@@ -235,13 +248,14 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
 
       if (error) throw error;
 
+      invalidateTradeQueries();
       onSuccess?.();
       return { error: null };
     } catch (error) {
       logger.error('Error deleting trade group:', error);
       return { error: error as Error };
     }
-  }, [onSuccess]);
+  }, [onSuccess, invalidateTradeQueries]);
 
   // Create a new trade group with initial fill
   const createGroup = useCallback(async (params: {
@@ -336,13 +350,14 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
 
       if (fillError) throw fillError;
 
+      invalidateTradeQueries();
       onSuccess?.();
       return { data: { ...group, status: group.status as 'open' | 'closed' }, error: null };
     } catch (error) {
       logger.error('Error creating trade group:', error);
       return { data: null, error: error as Error };
     }
-  }, [user, activePortfolioId, findMatchingOpenGroup, addToPosition, onSuccess]);
+  }, [user, activePortfolioId, findMatchingOpenGroup, addToPosition, onSuccess, invalidateTradeQueries]);
 
   return {
     findMatchingOpenGroup,

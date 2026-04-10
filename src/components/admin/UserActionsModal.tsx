@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -55,17 +55,10 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
   const [has2FAEnabled, setHas2FAEnabled] = useState<boolean | null>(null);
   const [is2FALoading, setIs2FALoading] = useState(false);
 
-  useEffect(() => {
-    if (user && open) {
-      fetchUserFeatures();
-      fetch2FAStatus();
-    }
-  }, [user, open]);
-
-  const fetch2FAStatus = async () => {
+  const fetch2FAStatus = useCallback(async () => {
     if (!user) return;
     setIs2FALoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from('totp_secrets')
@@ -81,12 +74,12 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
     } finally {
       setIs2FALoading(false);
     }
-  };
+  }, [user]);
 
-  const fetchUserFeatures = async () => {
+  const fetchUserFeatures = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from('user_features')
@@ -95,7 +88,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
 
       if (error) throw error;
       setFeatures(data || []);
-      
+
       // Initialize feature changes with current values
       const changes: Record<string, boolean> = {};
       AVAILABLE_FEATURES.forEach(f => {
@@ -109,7 +102,14 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user && open) {
+      fetchUserFeatures();
+      fetch2FAStatus();
+    }
+  }, [user, open, fetchUserFeatures, fetch2FAStatus]);
 
   const handleResetPassword = async () => {
     if (!user?.email) {

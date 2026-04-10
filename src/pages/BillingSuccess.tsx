@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -15,9 +15,9 @@ const BillingSuccess: React.FC = () => {
   
   const sessionId = searchParams.get('session_id');
 
-  const refreshStatus = async () => {
+  const refreshStatus = useCallback(async () => {
     if (!user) return;
-    
+
     setIsRefreshing(true);
     try {
       // Call check-subscription to sync latest status from Stripe
@@ -26,7 +26,7 @@ const BillingSuccess: React.FC = () => {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
       });
-      
+
       // Reload the page to get fresh profile data
       window.location.reload();
     } catch (error) {
@@ -34,13 +34,13 @@ const BillingSuccess: React.FC = () => {
     } finally {
       setIsRefreshing(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     // Auto-refresh after 3 seconds
     const timer = setTimeout(refreshStatus, 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [refreshStatus]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">

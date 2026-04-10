@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -93,18 +93,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
   const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
 
-  useEffect(() => {
-    if (user && open) {
-      setSelectedRole(user.role || 'user');
-      setSelectedPlan(user.plan_status || 'free');
-      setTrialEndsAt(user.trial_ends_at ? format(new Date(user.trial_ends_at), 'yyyy-MM-dd') : '');
-      setCompedAccess(user.comped_access || false);
-      setCompedReason(user.comped_reason || '');
-      fetchUserFeatures();
-    }
-  }, [user, open]);
-
-  const fetchUserFeatures = async () => {
+  const fetchUserFeatures = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
     
@@ -129,7 +118,18 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user && open) {
+      setSelectedRole(user.role || 'user');
+      setSelectedPlan(user.plan_status || 'free');
+      setTrialEndsAt(user.trial_ends_at ? format(new Date(user.trial_ends_at), 'yyyy-MM-dd') : '');
+      setCompedAccess(user.comped_access || false);
+      setCompedReason(user.comped_reason || '');
+      fetchUserFeatures();
+    }
+  }, [user, open, fetchUserFeatures]);
 
   const isTargetOwner = user?.role === 'owner';
   const canChangeRole = currentAdminIsOwner && !isTargetOwner;

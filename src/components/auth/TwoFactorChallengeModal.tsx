@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -52,21 +52,7 @@ export function TwoFactorChallengeModal({
     }
   }, [open, setError]);
 
-  // Auto-submit when 6 digits entered
-  useEffect(() => {
-    if (code.length === 6 && !useBackupCode) {
-      handleVerify(code);
-    }
-  }, [code]);
-
-  // Show time sync help immediately if TIME_DRIFT error is detected
-  useEffect(() => {
-    if (errorDetails?.code === 'TIME_DRIFT') {
-      setShowTimeSyncHelp(true);
-    }
-  }, [errorDetails]);
-
-  const handleVerify = async (codeToVerify?: string) => {
+  const handleVerify = useCallback(async (codeToVerify?: string) => {
     const finalCode = codeToVerify || (useBackupCode ? backupCode.trim().toUpperCase() : code);
     
     if (!useBackupCode && finalCode.length !== 6) {
@@ -97,7 +83,21 @@ export function TwoFactorChallengeModal({
         setShowTimeSyncHelp(true);
       }
     }
-  };
+  }, [useBackupCode, backupCode, code, verifyTotp, trustDevice, onSuccess, failedAttempts, showTimeSyncHelp, setError]);
+
+  // Auto-submit when 6 digits entered
+  useEffect(() => {
+    if (code.length === 6 && !useBackupCode) {
+      handleVerify(code);
+    }
+  }, [code, useBackupCode, handleVerify]);
+
+  // Show time sync help immediately if TIME_DRIFT error is detected
+  useEffect(() => {
+    if (errorDetails?.code === 'TIME_DRIFT') {
+      setShowTimeSyncHelp(true);
+    }
+  }, [errorDetails]);
 
   const toggleBackupCode = () => {
     setUseBackupCode(!useBackupCode);

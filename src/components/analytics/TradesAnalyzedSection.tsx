@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
@@ -39,13 +39,7 @@ const TradesAnalyzedSection: React.FC = () => {
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchTrades();
-    }
-  }, [user]);
-
-  const fetchTrades = async () => {
+  const fetchTrades = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
     
@@ -83,7 +77,13 @@ const TradesAnalyzedSection: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchTrades();
+    }
+  }, [user, fetchTrades]);
 
   const handleTradeClick = (trade: Trade) => {
     setSelectedTrade(trade);

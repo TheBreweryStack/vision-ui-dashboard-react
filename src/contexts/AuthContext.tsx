@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase, Profile, UserRole } from '@/lib/supabase';
 import { prefetchDashboardData, clearPrefetchCache } from '@/hooks/useDataPrefetch';
 import { logger } from '@/lib/logger';
+import { secureGet, secureRemove } from '@/lib/secureStorage';
 
 type TransitionType = 'signin' | 'signout' | null;
 
@@ -246,14 +247,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (totpData?.verified) {
       // User has 2FA enabled - check for trusted device
-      const deviceToken = localStorage.getItem('tradecafe_trusted_device');
-      
+      const deviceToken = await secureGet('tradecafe_trusted_device');
+
       if (deviceToken) {
         try {
           const { data: trustResult } = await supabase.functions.invoke('check-trusted-device', {
             body: { deviceToken },
           });
-          
+
           if (trustResult?.trusted) {
             logger.log('[AuthContext] Device trusted, skipping 2FA');
             return await completeSignInFlow(data.user, data.session);
@@ -261,9 +262,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (e) {
           logger.error('[AuthContext] Error checking trusted device:', e);
         }
-        
+
         // Invalid token - remove it
-        localStorage.removeItem('tradecafe_trusted_device');
+        secureRemove('tradecafe_trusted_device');
       }
       
       // 2FA required - store pending state, DON'T set user yet

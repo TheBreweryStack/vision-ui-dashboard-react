@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,10 +38,10 @@ const Sales: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState('30');
 
-  const fetchSalesData = async () => {
+  const fetchSalesData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke('stripe-sales', {
         body: { rangeDays: parseInt(rangeDays), limit: 50 },
@@ -58,13 +58,13 @@ const Sales: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [rangeDays]);
 
   useEffect(() => {
     if (isAdmin) {
       fetchSalesData();
     }
-  }, [isAdmin, rangeDays]);
+  }, [isAdmin, rangeDays, fetchSalesData]);
 
   const formatCurrency = (amount: number, currency = 'usd') => {
     return new Intl.NumberFormat('en-US', {

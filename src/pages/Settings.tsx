@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useAccountSettings } from '@/hooks/useAccountSettings';
@@ -89,15 +89,7 @@ const Settings: React.FC = () => {
 
   const [showOnboarding, setShowOnboarding] = useState(false);
 
-  useEffect(() => {
-    if (profile) {
-      setDisplayName(profile.display_name || '');
-      setAvatarUrl(profile.avatar_url || null);
-    }
-    check2FAStatus();
-  }, [profile, user]);
-
-  const check2FAStatus = async () => {
+  const check2FAStatus = useCallback(async () => {
     const totpStatus = await checkTwoFactorStatus();
     if (totpStatus.enabled && totpStatus.verified) {
       setIs2FAEnabled(true);
@@ -105,15 +97,23 @@ const Settings: React.FC = () => {
       setTrustedDevices(devices);
       return;
     }
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return;
     const { data } = await supabase
       .from('backup_codes')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('user_id', authUser.id)
       .limit(1);
     setIs2FAEnabled(data && data.length > 0);
-  };
+  }, [checkTwoFactorStatus, getTrustedDevices]);
+
+  useEffect(() => {
+    if (profile) {
+      setDisplayName(profile.display_name || '');
+      setAvatarUrl(profile.avatar_url || null);
+    }
+    check2FAStatus();
+  }, [profile, user, check2FAStatus]);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { logger } from '@/lib/logger';
+import { secureSet, secureGet, secureRemove } from '@/lib/secureStorage';
 
 interface TotpSetupResponse {
   success: boolean;
@@ -213,9 +214,9 @@ export function useTwoFactor() {
           return null;
         }
 
-        // Store device token if provided
+        // Store device token if provided (encrypted)
         if (data.deviceToken) {
-          localStorage.setItem(DEVICE_TOKEN_KEY, data.deviceToken);
+          await secureSet(DEVICE_TOKEN_KEY, data.deviceToken);
         }
 
         return data as VerifyResponse;
@@ -238,7 +239,7 @@ export function useTwoFactor() {
       return { trusted: false, reason: 'Not authenticated' };
     }
 
-    const deviceToken = localStorage.getItem(DEVICE_TOKEN_KEY);
+    const deviceToken = await secureGet(DEVICE_TOKEN_KEY);
     if (!deviceToken) {
       return { trusted: false, reason: 'No device token' };
     }
@@ -255,7 +256,7 @@ export function useTwoFactor() {
 
       if (!data.trusted) {
         // Remove invalid token
-        localStorage.removeItem(DEVICE_TOKEN_KEY);
+        secureRemove(DEVICE_TOKEN_KEY);
       }
 
       return data as TrustedDeviceResponse;
@@ -265,14 +266,14 @@ export function useTwoFactor() {
     }
   }, [getAccessToken]);
 
-  // Get stored device token
+  // Get stored device token (async — decrypts from secure storage)
   const getDeviceToken = useCallback(() => {
-    return localStorage.getItem(DEVICE_TOKEN_KEY);
+    return secureGet(DEVICE_TOKEN_KEY);
   }, []);
 
   // Clear device trust
   const clearDeviceTrust = useCallback(() => {
-    localStorage.removeItem(DEVICE_TOKEN_KEY);
+    secureRemove(DEVICE_TOKEN_KEY);
   }, []);
 
   // Disable 2FA (delete TOTP secret)

@@ -67,6 +67,60 @@ export const useTradeGroups = () => {
   const [groups, setGroups] = useState<TradeGroupWithFills[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Legacy fetch method as fallback
+  const fetchGroupsLegacy = useCallback(async () => {
+    if (!user) return;
+
+    const { data: fetchedGroups, error: groupsError } = await supabase
+      .from('trade_groups')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('entry_date', { ascending: false });
+
+    if (groupsError) throw groupsError;
+    const groupsData = fetchedGroups || [];
+
+    // Fetch all fills for these groups
+    const groupIds = groupsData.map(g => g.id);
+    let fills: TradeFill[] = [];
+
+    if (groupIds.length > 0) {
+      const { data: fillsData, error: fillsError } = await supabase
+        .from('trade_fills')
+        .select('*')
+        .in('trade_group_id', groupIds)
+        .order('fill_date', { ascending: true });
+
+      if (fillsError) throw fillsError;
+      fills = (fillsData || []) as TradeFill[];
+    }
+
+    // Combine groups with their fills and compute quantities from fills
+    const groupsWithFills: TradeGroupWithFills[] = groupsData.map(group => {
+      const groupFills = fills.filter(f => f.trade_group_id === group.id) as TradeFill[];
+
+      const openedQty = groupFills
+        .filter(f => f.effect === 'open')
+        .reduce((sum, f) => sum + f.qty, 0);
+      const closedQty = groupFills
+        .filter(f => f.effect === 'close')
+        .reduce((sum, f) => sum + f.qty, 0);
+      const remainingQty = openedQty - closedQty;
+      const computedStatus = remainingQty > 0 ? 'open' : 'closed';
+
+      return {
+        ...group,
+        opened_qty: openedQty,
+        closed_qty: closedQty,
+        remaining_qty: remainingQty,
+        status: computedStatus as 'open' | 'closed',
+        fills: groupFills,
+      };
+    });
+
+    setGroups(groupsWithFills);
+  }, [user]);
+
   const fetchGroups = useCallback(async () => {
     if (!user) return;
 
@@ -74,7 +128,7 @@ export const useTradeGroups = () => {
     try {
       // Check for prefetched data first
       const prefetched = getPrefetchedData();
-      
+
       if (prefetched?.tradeGroups && prefetched?.tradeFills) {
         // Use prefetched data (legacy path)
         const groupsData = prefetched.tradeGroups;
@@ -83,7 +137,7 @@ export const useTradeGroups = () => {
         // Combine groups with their fills and compute quantities from fills
         const groupsWithFills: TradeGroupWithFills[] = groupsData.map(group => {
           const groupFills = fills.filter(f => f.trade_group_id === group.id) as TradeFill[];
-          
+
           // Compute quantities from fills (source of truth)
           const openedQty = groupFills
             .filter(f => f.effect === 'open')
@@ -93,7 +147,7 @@ export const useTradeGroups = () => {
             .reduce((sum, f) => sum + f.qty, 0);
           const remainingQty = openedQty - closedQty;
           const computedStatus = remainingQty > 0 ? 'open' : 'closed';
-          
+
           return {
             ...group,
             opened_qty: openedQty,
@@ -120,11 +174,11 @@ export const useTradeGroups = () => {
 
         // Parse the result - it comes as { groups: [...] }
         const journalData = result as unknown as { groups: TradeGroupWithFills[] };
-        
+
         // Compute quantities from fills for each group
         const groupsWithFills: TradeGroupWithFills[] = (journalData?.groups || []).map(group => {
           const groupFills = group.fills || [];
-          
+
           // Compute quantities from fills (source of truth)
           const openedQty = groupFills
             .filter(f => f.effect === 'open')
@@ -134,7 +188,7 @@ export const useTradeGroups = () => {
             .reduce((sum, f) => sum + f.qty, 0);
           const remainingQty = openedQty - closedQty;
           const computedStatus = remainingQty > 0 ? 'open' : 'closed';
-          
+
           return {
             ...group,
             opened_qty: openedQty,
@@ -153,61 +207,7 @@ export const useTradeGroups = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, activePortfolioId]);
-
-  // Legacy fetch method as fallback
-  const fetchGroupsLegacy = async () => {
-    if (!user) return;
-
-    const { data: fetchedGroups, error: groupsError } = await supabase
-      .from('trade_groups')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('entry_date', { ascending: false });
-
-    if (groupsError) throw groupsError;
-    const groupsData = fetchedGroups || [];
-
-    // Fetch all fills for these groups
-    const groupIds = groupsData.map(g => g.id);
-    let fills: TradeFill[] = [];
-    
-    if (groupIds.length > 0) {
-      const { data: fillsData, error: fillsError } = await supabase
-        .from('trade_fills')
-        .select('*')
-        .in('trade_group_id', groupIds)
-        .order('fill_date', { ascending: true });
-
-      if (fillsError) throw fillsError;
-      fills = (fillsData || []) as TradeFill[];
-    }
-
-    // Combine groups with their fills and compute quantities from fills
-    const groupsWithFills: TradeGroupWithFills[] = groupsData.map(group => {
-      const groupFills = fills.filter(f => f.trade_group_id === group.id) as TradeFill[];
-      
-      const openedQty = groupFills
-        .filter(f => f.effect === 'open')
-        .reduce((sum, f) => sum + f.qty, 0);
-      const closedQty = groupFills
-        .filter(f => f.effect === 'close')
-        .reduce((sum, f) => sum + f.qty, 0);
-      const remainingQty = openedQty - closedQty;
-      const computedStatus = remainingQty > 0 ? 'open' : 'closed';
-      
-      return {
-        ...group,
-        opened_qty: openedQty,
-        closed_qty: closedQty,
-        remaining_qty: remainingQty,
-        status: computedStatus as 'open' | 'closed',
-        fills: groupFills,
-      };
-    });
-
-    setGroups(groupsWithFills);
-  };
+  }, [user, activePortfolioId, fetchGroupsLegacy]);
 
   useEffect(() => {
     fetchGroups();

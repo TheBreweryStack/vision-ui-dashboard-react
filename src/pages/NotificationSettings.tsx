@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -69,13 +69,7 @@ const NotificationSettings: React.FC = () => {
     ...groupedReminders.thisWeek,
   ];
 
-  useEffect(() => {
-    fetchAlerts();
-    fetchAnnouncements();
-    setIsLoading(false);
-  }, [user]);
-
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     if (!user) return;
     try {
       const { data } = await supabase
@@ -90,7 +84,13 @@ const NotificationSettings: React.FC = () => {
     } catch (error) {
       logger.error('Error fetching alerts:', error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchAlerts();
+    fetchAnnouncements();
+    setIsLoading(false);
+  }, [user, fetchAlerts]);
 
   const fetchAnnouncements = async () => {
     try {

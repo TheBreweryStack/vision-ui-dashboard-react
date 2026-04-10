@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -197,14 +197,14 @@ export const PushDebugPanel: React.FC = () => {
     }
   };
 
-  const fetchDbSubscriptions = async () => {
+  const fetchDbSubscriptions = useCallback(async () => {
     if (!user) return;
     const { data } = await supabase.from('push_subscriptions').select('id, endpoint, created_at').eq('user_id', user.id).order('created_at', { ascending: false });
     setDbSubscriptions(data || []);
     const currentSub = await getPushSubscription();
     if (currentSub && data) { setIsCurrentDeviceRegistered(data.some(sub => sub.endpoint === currentSub.endpoint)); }
     else { setIsCurrentDeviceRegistered(false); }
-  };
+  }, [user]);
 
   const subscribeThisDevice = async () => {
     if (!user) { toast.error('You must be logged in'); return; }
@@ -251,7 +251,7 @@ export const PushDebugPanel: React.FC = () => {
 
   const handleRefreshPush = () => { refreshPush(); fetchSubscriptionDetails(); fetchDbSubscriptions(); checkServiceWorkerStatus(); };
 
-  useEffect(() => { if (user) { fetchSubscriptionDetails(); fetchDbSubscriptions(); checkServiceWorkerStatus(); } }, [user]);
+  useEffect(() => { if (user) { fetchSubscriptionDetails(); fetchDbSubscriptions(); checkServiceWorkerStatus(); } }, [user, fetchDbSubscriptions]);
 
   const StatusIcon = ({ status }: { status: 'idle' | 'loading' | 'success' | 'error' }) => {
     if (status === 'loading') return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;

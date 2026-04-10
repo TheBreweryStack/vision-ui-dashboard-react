@@ -15,6 +15,9 @@ export const useNoteTaskCounts = (noteIds: string[]) => {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
+  // Stabilize noteIds for dependency tracking
+  const noteIdsKey = noteIds.join(',');
+
   const fetchTaskCounts = useCallback(async () => {
     if (!user || noteIds.length === 0) {
       setTaskCounts({});
@@ -24,7 +27,7 @@ export const useNoteTaskCounts = (noteIds: string[]) => {
 
     try {
       setIsLoading(true);
-      
+
       // Fetch all reminders linked to these notes
       const { data, error } = await supabase
         .from('reminders')
@@ -57,7 +60,8 @@ export const useNoteTaskCounts = (noteIds: string[]) => {
     } finally {
       setIsLoading(false);
     }
-  }, [noteIds.join(','), user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteIdsKey, user]);
 
   useEffect(() => {
     fetchTaskCounts();

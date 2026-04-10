@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { TickerLogo } from '@/components/common/TickerLogo';
@@ -40,7 +40,7 @@ export const WatchlistNewsWidget: React.FC = () => {
   const isFetchingRef = useRef(false);
 
   // Fetch all watchlists with their items
-  const fetchWatchlists = async () => {
+  const fetchWatchlists = useCallback(async () => {
     if (!user) return;
     
     const { data: wlData } = await supabase
@@ -68,7 +68,7 @@ export const WatchlistNewsWidget: React.FC = () => {
     }));
 
     setWatchlists(watchlistsWithTickers);
-  };
+  }, [user]);
 
   // Get active tickers based on selection
   const activeTickers = useMemo(() => {
@@ -82,7 +82,7 @@ export const WatchlistNewsWidget: React.FC = () => {
 
   const cacheKey = selectedWatchlistId || 'all';
 
-  const fetchWatchlistNews = async (refresh = false) => {
+  const fetchWatchlistNews = useCallback(async (refresh = false) => {
     if (!user || activeTickers.length === 0) {
       setNews([]);
       setIsLoading(false);
@@ -156,12 +156,12 @@ export const WatchlistNewsWidget: React.FC = () => {
       setIsRefreshing(false);
       isFetchingRef.current = false;
     }
-  };
+  }, [user, activeTickers, cacheKey]);
 
   // Initial fetch of watchlists
   useEffect(() => {
     fetchWatchlists();
-  }, [user]);
+  }, [fetchWatchlists]);
 
   // Fetch news when active tickers change
   useEffect(() => {
@@ -184,7 +184,7 @@ export const WatchlistNewsWidget: React.FC = () => {
       setNews([]);
       setIsLoading(false);
     }
-  }, [cacheKey, activeTickers.length, watchlists.length]);
+  }, [cacheKey, activeTickers.length, watchlists.length, fetchWatchlistNews]);
 
   const getSentimentBadge = (sentiment: string) => {
     const s = sentiment?.toLowerCase() || '';

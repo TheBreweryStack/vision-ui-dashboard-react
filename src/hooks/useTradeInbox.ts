@@ -60,12 +60,13 @@ export const useTradeInbox = () => {
       
       if (error) throw error;
       
-      // Optimistically update cache
+      // Optimistically update cache, then refetch in background
       queryClient.setQueryData<TradeInboxItem[]>(queryKey, (prev) =>
         prev?.map(item =>
           item.id === id ? { ...item, status, imported_group_id: importedGroupId || item.imported_group_id } : item
         )
       );
+      queryClient.invalidateQueries({ queryKey });
     } catch (error) {
       logger.error('Error updating trade inbox item:', error);
       toast.error('Failed to update item');
@@ -82,10 +83,11 @@ export const useTradeInbox = () => {
       
       if (error) throw error;
       
-      // Optimistically update cache
+      // Optimistically update cache, then refetch in background
       queryClient.setQueryData<TradeInboxItem[]>(queryKey, (prev) =>
         prev?.filter(item => item.id !== id)
       );
+      queryClient.invalidateQueries({ queryKey });
       toast.success('Item deleted');
     } catch (error) {
       logger.error('Error deleting trade inbox item:', error);

@@ -121,7 +121,7 @@ export function useDashboardWidgets() {
       setSavedLayout(initialLayout);
       setDraftLayout(initialLayout);
     }
-  }, [initialLayout]);
+  }, [initialLayout, isEditing]);
 
   const activeLayout = isEditing ? draftLayout : savedLayout;
   const layouts = useMemo(() => deriveLayouts(activeLayout), [activeLayout]);

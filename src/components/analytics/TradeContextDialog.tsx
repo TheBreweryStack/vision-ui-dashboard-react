@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -67,16 +67,10 @@ const TradeContextDialog: React.FC<TradeContextDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isEnriching, setIsEnriching] = useState(false);
 
-  useEffect(() => {
-    if (trade && open) {
-      fetchEnrichment();
-    }
-  }, [trade, open]);
-
-  const fetchEnrichment = async () => {
+  const fetchEnrichment = useCallback(async () => {
     if (!trade) return;
     setIsLoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from('trade_enrichment')
@@ -99,7 +93,13 @@ const TradeContextDialog: React.FC<TradeContextDialogProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [trade]);
+
+  useEffect(() => {
+    if (trade && open) {
+      fetchEnrichment();
+    }
+  }, [trade, open, fetchEnrichment]);
 
   const handleEnrichTrade = async () => {
     if (!trade) return;

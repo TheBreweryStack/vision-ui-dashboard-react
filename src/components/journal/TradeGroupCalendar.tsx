@@ -200,7 +200,7 @@ export function TradeGroupCalendar({ groups, onUpdateImages, onClosePosition }: 
         setCurrentMonth(new Date(selectedYear, 0, 1));
       }
     }
-  }, [selectedYear, availableMonths]);
+  }, [selectedYear, availableMonths, currentMonth]);
 
   // Aggregate monthly P&L for Year view
   const monthlyPnL = useMemo(() => {
