@@ -3,15 +3,16 @@ import App from "./App.tsx";
 import "./index.css";
 import { listenForServiceWorkerUpdates, registerServiceWorker } from "@/lib/pushNotifications";
 import { logBuildInfo } from "@/lib/buildInfo";
+import { logger } from '@/lib/logger';
 
 // Log build info for debugging
 logBuildInfo();
 
 // Register our custom SW FIRST, before app renders - ensures it takes priority
 registerServiceWorker().then(() => {
-  console.log('[main] Custom SW registered successfully');
+  logger.log('[main] Custom SW registered successfully');
 }).catch((err) => {
-  console.error('[main] Custom SW registration failed:', err);
+  logger.error('[main] Custom SW registration failed:', err);
 });
 
 // Listen for SW updates from the stub (old sw.js will trigger reload)

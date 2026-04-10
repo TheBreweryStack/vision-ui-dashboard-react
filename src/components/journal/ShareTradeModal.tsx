@@ -17,6 +17,7 @@ import { supabase, Trade } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface ShareTradeModalProps {
   open: boolean;
@@ -76,7 +77,7 @@ export function ShareTradeModal({ open, onOpenChange, trade }: ShareTradeModalPr
       setShareCode(code);
       toast.success('Share link created!');
     } catch (error) {
-      console.error('Error creating share:', error);
+      logger.error('Error creating share:', error);
       toast.error('Failed to create share link');
     } finally {
       setIsGenerating(false);

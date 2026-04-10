@@ -22,6 +22,7 @@ import {
 import { format, parseISO, isPast, isToday, addMinutes } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 
 interface PriceAlert {
@@ -89,7 +90,7 @@ const Alerts: React.FC = () => {
         
         setPriceAlerts(formattedAlerts);
       } catch (error) {
-        console.error('Error fetching price alerts:', error);
+        logger.error('Error fetching price alerts:', error);
       } finally {
         setAlertsLoading(false);
       }

@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { TickerLogo } from '@/components/common/TickerLogo';
+import { logger } from '@/lib/logger';
 
 interface TradeWithUser extends Trade {
   user?: Profile;
@@ -53,7 +54,7 @@ export const AllTradesTab: React.FC = () => {
       setTrades(tradesWithUsers);
       setUsers(usersData || []);
     } catch (error) {
-      console.error('Error fetching trades:', error);
+      logger.error('Error fetching trades:', error);
       toast.error('Failed to load trades');
     } finally {
       setIsLoading(false);

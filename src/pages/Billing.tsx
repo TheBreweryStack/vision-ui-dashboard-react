@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { PlanBadge, RoleBadge } from '@/components/common/PlanBadge';
+import { logger } from '@/lib/logger';
 
 const Billing: React.FC = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const Billing: React.FC = () => {
         toast.info(data?.message || 'No subscription to manage');
       }
     } catch (error) {
-      console.error('Error opening portal:', error);
+      logger.error('Error opening portal:', error);
       toast.error('Unable to open billing portal. Please try again.');
     } finally {
       setIsLoadingPortal(false);

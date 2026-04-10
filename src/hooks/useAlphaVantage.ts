@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export interface AlphaVantageQuote {
   symbol: string;
@@ -92,7 +93,7 @@ export const useAlphaVantage = () => {
         setQuotes(data.quotes);
       }
     } catch (err) {
-      console.error('Alpha Vantage quotes error:', err);
+      logger.error('Alpha Vantage quotes error:', err);
       setError('Failed to fetch quotes');
     } finally {
       setIsLoading(false);
@@ -112,7 +113,7 @@ export const useAlphaVantage = () => {
       }
       return null;
     } catch (err) {
-      console.error('Alpha Vantage quote error:', err);
+      logger.error('Alpha Vantage quote error:', err);
       return null;
     }
   }, []);
@@ -132,7 +133,7 @@ export const useAlphaVantage = () => {
         setNews(data.news);
       }
     } catch (err) {
-      console.error('Alpha Vantage news error:', err);
+      logger.error('Alpha Vantage news error:', err);
       setError('Failed to fetch news');
     } finally {
       setIsLoading(false);
@@ -155,7 +156,7 @@ export const useAlphaVantage = () => {
       }
       return data?.overview;
     } catch (err) {
-      console.error('Alpha Vantage overview error:', err);
+      logger.error('Alpha Vantage overview error:', err);
       setError('Failed to fetch company overview');
       return null;
     } finally {
@@ -185,7 +186,7 @@ export const useAlphaVantage = () => {
       }
       return null;
     } catch (err) {
-      console.error('Alpha Vantage options error:', err);
+      logger.error('Alpha Vantage options error:', err);
       setError('Failed to fetch options chain');
       return null;
     } finally {

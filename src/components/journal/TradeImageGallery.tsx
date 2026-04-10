@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface TradeImageGalleryProps {
   images: string[];
@@ -60,7 +61,7 @@ export function TradeImageGallery({
           .upload(fileName, file);
 
         if (error) {
-          console.error('Upload error:', error);
+          logger.error('Upload error:', error);
           toast.error(`Failed to upload ${file.name}`);
           continue;
         }
@@ -71,7 +72,7 @@ export function TradeImageGallery({
           .createSignedUrl(data.path, 604800); // 7 days expiry
 
         if (urlError || !signedUrlData) {
-          console.error('Signed URL error:', urlError);
+          logger.error('Signed URL error:', urlError);
           toast.error(`Failed to get URL for ${file.name}`);
           continue;
         }
@@ -85,7 +86,7 @@ export function TradeImageGallery({
         toast.success(`${newImages.length} image${newImages.length > 1 ? 's' : ''} uploaded`);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error('Upload error:', error);
       toast.error('Failed to upload images');
     } finally {
       setIsUploading(false);
@@ -111,7 +112,7 @@ export function TradeImageGallery({
       onImagesChange(updatedImages);
       toast.success('Image removed');
     } catch (error) {
-      console.error('Remove error:', error);
+      logger.error('Remove error:', error);
       toast.error('Failed to remove image');
     }
   };

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 // Cache for prefetched data, keyed by userId:portfolioId
 interface TradeGroupRow { id: string; [key: string]: unknown }
@@ -110,7 +111,7 @@ export async function prefetchDashboardData(userId: string, portfolioId?: string
     prefetchCacheMap.set(key, cache);
     return cache;
   } catch (error) {
-    console.error('Prefetch error:', error);
+    logger.error('Prefetch error:', error);
     return { timestamp: 0 };
   }
 }

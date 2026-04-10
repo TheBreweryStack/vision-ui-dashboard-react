@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Key, Shield, Sparkles, AlertTriangle, ShieldCheck, ShieldOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface UserWithRole {
   id: string;
@@ -75,7 +76,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       if (error) throw error;
       setHas2FAEnabled(data?.verified ?? false);
     } catch (error) {
-      console.error('Error fetching 2FA status:', error);
+      logger.error('Error fetching 2FA status:', error);
       setHas2FAEnabled(null);
     } finally {
       setIs2FALoading(false);
@@ -103,7 +104,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       });
       setFeatureChanges(changes);
     } catch (error) {
-      console.error('Error fetching user features:', error);
+      logger.error('Error fetching user features:', error);
       toast.error('Failed to load user features');
     } finally {
       setIsLoading(false);
@@ -125,7 +126,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       if (error) throw error;
       toast.success(`Password reset email sent to ${user.email}`);
     } catch (error) {
-      console.error('Error resetting password:', error);
+      logger.error('Error resetting password:', error);
       toast.error('Failed to send password reset email');
     } finally {
       setIsResettingPassword(false);
@@ -148,17 +149,17 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
     
     setIsResetting2FA(true);
     try {
-      console.log('[UserActionsModal] Calling admin-reset-2fa for user:', user.id);
+      logger.log('[UserActionsModal] Calling admin-reset-2fa for user:', user.id);
       
       const { data, error } = await supabase.functions.invoke('admin-reset-2fa', {
         body: { userId: user.id }
       });
       
-      console.log('[UserActionsModal] Response:', { data, error });
+      logger.log('[UserActionsModal] Response:', { data, error });
       
       // Handle invoke error
       if (error) {
-        console.error('[UserActionsModal] Invoke error:', error);
+        logger.error('[UserActionsModal] Invoke error:', error);
         throw error;
       }
       
@@ -174,7 +175,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       
       // Success! Show what was deleted
       const deleted = data.deleted || {};
-      console.log('[UserActionsModal] 2FA reset successful:', deleted);
+      logger.log('[UserActionsModal] 2FA reset successful:', deleted);
       
       toast.success(
         `2FA reset complete. Removed ${deleted.totpSecrets || 0} secret(s), ` +
@@ -186,7 +187,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       
       onUpdate?.();
     } catch (error: unknown) {
-      console.error('[UserActionsModal] Error resetting 2FA:', error);
+      logger.error('[UserActionsModal] Error resetting 2FA:', error);
       toast.error(error?.message || 'Failed to reset 2FA');
     } finally {
       setIsResetting2FA(false);
@@ -227,7 +228,7 @@ export const UserActionsModal: React.FC<UserActionsModalProps> = ({
       toast.success('Features updated successfully');
       onUpdate?.();
     } catch (error) {
-      console.error('Error updating features:', error);
+      logger.error('Error updating features:', error);
       toast.error('Failed to update features');
     } finally {
       setIsLoading(false);

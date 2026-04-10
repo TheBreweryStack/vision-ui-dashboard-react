@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface NoteTask {
   id: string;
@@ -50,7 +51,7 @@ export const useNoteTasks = (noteId: string | null) => {
       if (error) throw error;
       setTasks((data as NoteTask[]) || []);
     } catch (error) {
-      console.error('Error fetching note tasks:', error);
+      logger.error('Error fetching note tasks:', error);
       toast.error('Failed to load tasks');
     } finally {
       setIsLoading(false);
@@ -104,7 +105,7 @@ export const useNoteTasks = (noteId: string | null) => {
       toast.success('Task added');
       return data;
     } catch (error) {
-      console.error('Error adding task:', error);
+      logger.error('Error adding task:', error);
       toast.error('Failed to add task');
       return null;
     }
@@ -126,7 +127,7 @@ export const useNoteTasks = (noteId: string | null) => {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error toggling task:', error);
+      logger.error('Error toggling task:', error);
       // Rollback
       setTasks(prev =>
         prev.map(task =>
@@ -152,7 +153,7 @@ export const useNoteTasks = (noteId: string | null) => {
       if (error) throw error;
       toast.success('Task deleted');
     } catch (error) {
-      console.error('Error deleting task:', error);
+      logger.error('Error deleting task:', error);
       // Rollback
       if (taskToDelete) {
         setTasks(prev => [...prev, taskToDelete]);

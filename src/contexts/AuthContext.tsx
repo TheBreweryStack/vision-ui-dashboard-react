@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useRef } from 'r
 import { User, Session } from '@supabase/supabase-js';
 import { supabase, Profile, UserRole } from '@/lib/supabase';
 import { prefetchDashboardData, clearPrefetchCache } from '@/hooks/useDataPrefetch';
+import { logger } from '@/lib/logger';
 
 type TransitionType = 'signin' | 'signout' | null;
 
@@ -59,11 +60,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfileAndRoles = async (userId: string) => {
     // Guard against stale updates
     if (currentUserIdRef.current !== userId) {
-      console.log('[AuthContext] Skipping stale fetch for user:', userId);
+      logger.log('[AuthContext] Skipping stale fetch for user:', userId);
       return;
     }
 
-    console.log('[AuthContext] fetchProfileAndRoles called for userId:', userId);
+    logger.log('[AuthContext] fetchProfileAndRoles called for userId:', userId);
     setIsRoleLoading(true);
 
     try {
@@ -74,12 +75,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Double-check we're still working with the current user
       if (currentUserIdRef.current !== userId) {
-        console.log('[AuthContext] Discarding stale results for user:', userId);
+        logger.log('[AuthContext] Discarding stale results for user:', userId);
         return;
       }
 
-      console.log('[AuthContext] Profile result:', profileResult.data ? 'found' : 'not found', profileResult.error);
-      console.log('[AuthContext] Roles result:', rolesResult.data, rolesResult.error);
+      logger.log('[AuthContext] Profile result:', profileResult.data ? 'found' : 'not found', profileResult.error);
+      logger.log('[AuthContext] Roles result:', rolesResult.data, rolesResult.error);
 
       if (!profileResult.error && profileResult.data) {
         setProfile(profileResult.data);
@@ -93,10 +94,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const picked = adminRow ?? roles[0] ?? null;
       setUserRole(picked);
 
-      console.log('[AuthContext] Set userRoles:', roles.length, 'roles');
-      console.log('[AuthContext] Picked role:', picked?.role ?? 'none');
+      logger.log('[AuthContext] Set userRoles:', roles.length, 'roles');
+      logger.log('[AuthContext] Picked role:', picked?.role ?? 'none');
     } catch (error) {
-      console.error('[AuthContext] Error fetching profile/roles:', error);
+      logger.error('[AuthContext] Error fetching profile/roles:', error);
     } finally {
       if (currentUserIdRef.current === userId) {
         setIsRoleLoading(false);
@@ -105,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    console.log('[AuthContext] Initializing...', {
+    logger.log('[AuthContext] Initializing...', {
       supabaseUrl: import.meta.env.VITE_SUPABASE_URL ? 'present' : 'missing',
       supabaseKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ? 'present' : 'missing',
     });
@@ -116,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
       
-      console.log('[AuthContext] Initial session check:', session?.user?.id ?? 'no session');
+      logger.log('[AuthContext] Initial session check:', session?.user?.id ?? 'no session');
       
       currentUserIdRef.current = session?.user?.id ?? null;
       setSession(session);
@@ -137,12 +138,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       (event, session) => {
         if (!mounted) return;
         
-        console.log('[AuthContext] Auth state changed:', event, session?.user?.id);
+        logger.log('[AuthContext] Auth state changed:', event, session?.user?.id);
         
         // Skip SIGNED_IN events when we're handling sign-in manually
         // This prevents the dashboard flash before 2FA check
         if (event === 'SIGNED_IN' && handlingSignInRef.current) {
-          console.log('[AuthContext] Ignoring SIGNED_IN event - handled manually in signIn()');
+          logger.log('[AuthContext] Ignoring SIGNED_IN event - handled manually in signIn()');
           return;
         }
         
@@ -254,11 +255,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           
           if (trustResult?.trusted) {
-            console.log('[AuthContext] Device trusted, skipping 2FA');
+            logger.log('[AuthContext] Device trusted, skipping 2FA');
             return await completeSignInFlow(data.user, data.session);
           }
         } catch (e) {
-          console.error('[AuthContext] Error checking trusted device:', e);
+          logger.error('[AuthContext] Error checking trusted device:', e);
         }
         
         // Invalid token - remove it
@@ -266,7 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // 2FA required - store pending state, DON'T set user yet
-      console.log('[AuthContext] 2FA required, showing challenge modal');
+      logger.log('[AuthContext] 2FA required, showing challenge modal');
       setPending2FA({ userId: data.user.id, session: data.session });
       return { error: null, requires2FA: true };
     }
@@ -279,7 +280,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const complete2FALogin = async () => {
     if (!pending2FA) return;
     
-    console.log('[AuthContext] 2FA verified, completing login');
+    logger.log('[AuthContext] 2FA verified, completing login');
     
     // Get fresh user data from the session
     const { data: { user } } = await supabase.auth.getUser();
@@ -291,7 +292,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Called when user cancels 2FA
   const cancel2FALogin = async () => {
-    console.log('[AuthContext] 2FA cancelled, signing out');
+    logger.log('[AuthContext] 2FA cancelled, signing out');
     await supabase.auth.signOut();
     setPending2FA(null);
     handlingSignInRef.current = false;

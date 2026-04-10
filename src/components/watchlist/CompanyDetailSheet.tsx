@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { logger } from '@/lib/logger';
 
 interface CompanyOverview {
   symbol: string;
@@ -120,7 +121,7 @@ export const CompanyDetailSheet: React.FC<CompanyDetailSheetProps> = ({
         setOverview(result.data.overview);
       }
     } catch (err) {
-      console.error('Error fetching overview:', err);
+      logger.error('Error fetching overview:', err);
     } finally {
       setOverviewLoading(false);
     }
@@ -145,7 +146,7 @@ export const CompanyDetailSheet: React.FC<CompanyDetailSheetProps> = ({
         setNews(result.data.news);
       }
     } catch (err) {
-      console.error('Error fetching news:', err);
+      logger.error('Error fetching news:', err);
     } finally {
       setNewsLoading(false);
     }

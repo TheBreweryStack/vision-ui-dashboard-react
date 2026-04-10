@@ -23,6 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 import { TradeGroupWithFills } from '@/hooks/useTradeGroups';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 const editSchema = z.object({
   strategy: z.string().optional(),
@@ -69,7 +70,7 @@ export function EditTradeGroupModal({ open, onOpenChange, group, onSave }: EditT
       toast.success('Position updated');
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to update position:', error);
+      logger.error('Failed to update position:', error);
       toast.error('Failed to update position');
     } finally {
       setIsSubmitting(false);

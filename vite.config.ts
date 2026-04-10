@@ -100,6 +100,40 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ].filter(Boolean),
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': [
+            '@supabase/supabase-js',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-switch',
+            '@radix-ui/react-collapsible',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-scroll-area',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-separator',
+            '@radix-ui/react-label',
+            '@radix-ui/react-progress',
+            '@radix-ui/react-slot',
+          ],
+          'vendor-charts': ['recharts'],
+          'vendor-grid': ['react-grid-layout'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-dates': ['date-fns'],
+          'vendor-query': ['@tanstack/react-query'],
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

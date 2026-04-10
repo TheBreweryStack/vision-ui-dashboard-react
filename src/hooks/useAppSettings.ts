@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export type TwoFAEnforcement = 'disabled' | 'optional' | 'prompted' | 'mandatory';
 
@@ -47,7 +48,7 @@ async function fetchAppSettings(): Promise<AppSettings> {
     .maybeSingle();
 
   if (error) {
-    console.error('[useAppSettings] Error fetching settings:', error);
+    logger.error('[useAppSettings] Error fetching settings:', error);
     return DEFAULT_SETTINGS;
   }
 

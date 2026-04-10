@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { captureDeviceMetadata, generateDeviceLabel, type DeviceMetadata } from "@/lib/deviceMetadata";
+import { logger } from '@/lib/logger';
 
 // VAPID public key for push subscription
 // This must match the VAPID_KEYS_JWK secret configured in Supabase
@@ -30,7 +31,7 @@ export function getOrCreateDeviceId(): string {
   if (!deviceId) {
     deviceId = crypto.randomUUID();
     localStorage.setItem(DEVICE_ID_KEY, deviceId);
-    console.log("[Push] Created new device ID:", deviceId.slice(0, 8) + "...");
+    logger.log("[Push] Created new device ID:", deviceId.slice(0, 8) + "...");
   }
   return deviceId;
 }
@@ -86,14 +87,14 @@ export function listenForServiceWorkerUpdates(): void {
 
   navigator.serviceWorker.addEventListener("message", (event) => {
     if (event.data?.type === "SW_UPDATED") {
-      console.log("[Push] Service Worker updated, reloading page...", event.data.message);
+      logger.log("[Push] Service Worker updated, reloading page...", event.data.message);
       setTimeout(() => {
         window.location.reload();
       }, 500);
     }
   });
 
-  console.log("[Push] Listening for SW update messages");
+  logger.log("[Push] Listening for SW update messages");
 }
 
 /**
@@ -101,7 +102,7 @@ export function listenForServiceWorkerUpdates(): void {
  */
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!("serviceWorker" in navigator)) {
-    console.warn("[Push] Service workers not supported");
+    logger.warn("[Push] Service workers not supported");
     return null;
   }
 
@@ -114,23 +115,23 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
       // If registered with old sw.js (not versioned), unregister it
       if (scriptURL.includes("/sw.js") && !scriptURL.includes(SW_FILENAME)) {
-        console.log("[Push] Found old SW registration, unregistering:", scriptURL);
+        logger.log("[Push] Found old SW registration, unregistering:", scriptURL);
         await reg.unregister();
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       // If already registered with correct versioned file, verify it works
       if (scriptURL.includes(SW_FILENAME)) {
-        console.log("[Push] Found existing versioned SW:", scriptURL);
+        logger.log("[Push] Found existing versioned SW:", scriptURL);
 
         // Test if it responds correctly
         if (reg.active) {
           const isValid = await testSwVersion(reg.active);
           if (isValid) {
-            console.log("[Push] Existing SW is valid, keeping it");
+            logger.log("[Push] Existing SW is valid, keeping it");
             return reg;
           } else {
-            console.log("[Push] Existing SW version mismatch, updating...");
+            logger.log("[Push] Existing SW version mismatch, updating...");
             await reg.update();
             return reg;
           }
@@ -139,20 +140,20 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     }
 
     // Register with versioned filename (no query params needed - filename IS the version)
-    console.log("[Push] Registering fresh SW:", `/${SW_FILENAME}`);
+    logger.log("[Push] Registering fresh SW:", `/${SW_FILENAME}`);
     const registration = await navigator.serviceWorker.register(`/${SW_FILENAME}`, {
       scope: "/",
       updateViaCache: "none",
     });
 
-    console.log("[Push] SW registered:", registration.scope);
+    logger.log("[Push] SW registered:", registration.scope);
 
     // Force update check
     await registration.update();
 
     return registration;
   } catch (error) {
-    console.error("[Push] Service worker registration failed:", error);
+    logger.error("[Push] Service worker registration failed:", error);
     return null;
   }
 }
@@ -168,7 +169,7 @@ export async function testSwVersion(sw: ServiceWorker): Promise<boolean> {
     channel.port1.onmessage = (event) => {
       clearTimeout(timeout);
       const receivedVersion = event.data?.version;
-      console.log("[Push] SW version check:", receivedVersion, "expected:", EXPECTED_SW_VERSION);
+      logger.log("[Push] SW version check:", receivedVersion, "expected:", EXPECTED_SW_VERSION);
       resolve(receivedVersion === EXPECTED_SW_VERSION);
     };
 
@@ -181,7 +182,7 @@ export async function testSwVersion(sw: ServiceWorker): Promise<boolean> {
  */
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
   if (!("Notification" in window)) {
-    console.warn("[Push] Notifications not supported");
+    logger.warn("[Push] Notifications not supported");
     return "denied";
   }
 
@@ -190,16 +191,16 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   }
 
   if (Notification.permission === "denied") {
-    console.warn("[Push] Notifications are blocked by user");
+    logger.warn("[Push] Notifications are blocked by user");
     return "denied";
   }
 
   try {
     const permission = await Notification.requestPermission();
-    console.log("[Push] Notification permission:", permission);
+    logger.log("[Push] Notification permission:", permission);
     return permission;
   } catch (error) {
-    console.error("[Push] Failed to request permission:", error);
+    logger.error("[Push] Failed to request permission:", error);
     return "denied";
   }
 }
@@ -221,7 +222,7 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
     // 2. Request permission
     const permission = await requestNotificationPermission();
     if (permission !== "granted") {
-      console.warn("[Push] Permission not granted");
+      logger.warn("[Push] Permission not granted");
       return false;
     }
 
@@ -231,7 +232,7 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
 
     // Always unsubscribe existing subscription to force fresh VAPID binding
     if (subscription) {
-      console.log("[Push] Unsubscribing existing subscription to force fresh VAPID binding...");
+      logger.log("[Push] Unsubscribing existing subscription to force fresh VAPID binding...");
       await subscription.unsubscribe();
       subscription = null;
     }
@@ -249,7 +250,7 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
       userVisibleOnly: true,
       applicationServerKey: keyBuffer,
     });
-    console.log("[Push] New subscription created");
+    logger.log("[Push] New subscription created");
 
     // 4. Extract keys from subscription
     const subscriptionJson = subscription.toJSON();
@@ -273,7 +274,7 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
       .eq("device_id", deviceId);
 
     if (deleteError) {
-      console.warn("[Push] Failed to delete old subscription:", deleteError);
+      logger.warn("[Push] Failed to delete old subscription:", deleteError);
     }
 
     // 7. Capture device metadata
@@ -298,10 +299,10 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
       throw insertError;
     }
 
-    console.log("[Push] Subscription saved with device_id:", deviceId.slice(0, 8) + "...");
+    logger.log("[Push] Subscription saved with device_id:", deviceId.slice(0, 8) + "...");
     return true;
   } catch (error) {
-    console.error("[Push] Subscribe failed:", error);
+    logger.error("[Push] Subscribe failed:", error);
     return false;
   }
 }
@@ -322,10 +323,10 @@ export async function unsubscribeFromPushNotifications(userId: string): Promise<
       await supabase.from("push_subscriptions").delete().eq("user_id", userId).eq("endpoint", subscription.endpoint);
     }
 
-    console.log("[Push] Unsubscribed successfully");
+    logger.log("[Push] Unsubscribed successfully");
     return true;
   } catch (error) {
-    console.error("[Push] Unsubscribe failed:", error);
+    logger.error("[Push] Unsubscribe failed:", error);
     return false;
   }
 }
@@ -375,13 +376,13 @@ export async function forceServiceWorkerControl(): Promise<boolean> {
 
     const registration = await navigator.serviceWorker.getRegistration();
     if (!registration) {
-      console.warn("[Push] No SW registration found");
+      logger.warn("[Push] No SW registration found");
       return false;
     }
 
     // If there's a waiting worker, activate it immediately
     if (registration.waiting) {
-      console.log("[Push] Activating waiting service worker...");
+      logger.log("[Push] Activating waiting service worker...");
       registration.waiting.postMessage({ type: "SKIP_WAITING" });
 
       // Wait for the new SW to take control
@@ -389,7 +390,7 @@ export async function forceServiceWorkerControl(): Promise<boolean> {
         navigator.serviceWorker.addEventListener(
           "controllerchange",
           () => {
-            console.log("[Push] New service worker took control");
+            logger.log("[Push] New service worker took control");
             resolve(true);
           },
           { once: true },
@@ -402,7 +403,7 @@ export async function forceServiceWorkerControl(): Promise<boolean> {
 
     // If SW is active but not controlling, force unregister and re-register
     if (registration.active && !navigator.serviceWorker.controller) {
-      console.log("[Push] SW active but not controlling, forcing re-registration...");
+      logger.log("[Push] SW active but not controlling, forcing re-registration...");
       await registration.unregister();
 
       // Re-register with versioned filename
@@ -410,7 +411,7 @@ export async function forceServiceWorkerControl(): Promise<boolean> {
         scope: "/",
         updateViaCache: "none",
       });
-      console.log("[Push] New SW registered:", newRegistration.scope);
+      logger.log("[Push] New SW registered:", newRegistration.scope);
 
       // Wait for it to become active and controlling
       await navigator.serviceWorker.ready;
@@ -419,7 +420,7 @@ export async function forceServiceWorkerControl(): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error("[Push] Failed to force SW control:", error);
+    logger.error("[Push] Failed to force SW control:", error);
     return false;
   }
 }
@@ -441,7 +442,7 @@ export async function isSubscriptionValid(userId: string): Promise<boolean> {
       .maybeSingle();
 
     if (error || !data?.vapid_key_hash) {
-      console.log("[Push] No stored VAPID hash found, subscription may be outdated");
+      logger.log("[Push] No stored VAPID hash found, subscription may be outdated");
       return false;
     }
 
@@ -449,12 +450,12 @@ export async function isSubscriptionValid(userId: string): Promise<boolean> {
     const isValid = data.vapid_key_hash === currentHash;
 
     if (!isValid) {
-      console.log("[Push] VAPID key mismatch! Stored:", data.vapid_key_hash, "Current:", currentHash);
+      logger.log("[Push] VAPID key mismatch! Stored:", data.vapid_key_hash, "Current:", currentHash);
     }
 
     return isValid;
   } catch (error) {
-    console.error("[Push] Error checking subscription validity:", error);
+    logger.error("[Push] Error checking subscription validity:", error);
     return false;
   }
 }
@@ -463,7 +464,7 @@ export async function isSubscriptionValid(userId: string): Promise<boolean> {
  * Force Service Worker recovery by updating (NOT unregistering to preserve push subscription)
  */
 async function forceServiceWorkerRecovery(): Promise<void> {
-  console.log("[SW Health] Forcing recovery via update (preserving push subscription)...");
+  logger.log("[SW Health] Forcing recovery via update (preserving push subscription)...");
   const registrations = await navigator.serviceWorker.getRegistrations();
 
   for (const reg of registrations) {
@@ -474,7 +475,7 @@ async function forceServiceWorkerRecovery(): Promise<void> {
 
   // Wait for SW to become active
   await navigator.serviceWorker.ready;
-  console.log("[SW Health] Recovery complete (push subscription preserved)");
+  logger.log("[SW Health] Recovery complete (push subscription preserved)");
 }
 
 /**
@@ -487,7 +488,7 @@ async function forceServiceWorkerRecovery(): Promise<void> {
  */
 export function startServiceWorkerHealthMonitor(onHealthy?: () => void, onUnhealthy?: () => void): () => void {
   if (!("serviceWorker" in navigator)) {
-    console.log("[SW Health] Service workers not supported, skipping monitor");
+    logger.log("[SW Health] Service workers not supported, skipping monitor");
     return () => {};
   }
 
@@ -502,12 +503,12 @@ export function startServiceWorkerHealthMonitor(onHealthy?: () => void, onUnheal
 
       if (!registration?.active) {
         consecutiveFailures++;
-        console.warn("[SW Health] No active SW, failures:", consecutiveFailures);
+        logger.warn("[SW Health] No active SW, failures:", consecutiveFailures);
         onUnhealthy?.();
 
         // Try to recover if no SW at all
         if (consecutiveFailures >= MAX_FAILURES_BEFORE_RECOVERY) {
-          console.log("[SW Health] No SW detected, attempting registration...");
+          logger.log("[SW Health] No SW detected, attempting registration...");
           await registerServiceWorker();
           consecutiveFailures = 0;
         }
@@ -519,24 +520,24 @@ export function startServiceWorkerHealthMonitor(onHealthy?: () => void, onUnheal
 
       if (isAlive) {
         if (consecutiveFailures > 0) {
-          console.log("[SW Health] SW recovered, resetting failure count");
+          logger.log("[SW Health] SW recovered, resetting failure count");
         }
         consecutiveFailures = 0;
         onHealthy?.();
       } else {
         consecutiveFailures++;
-        console.warn("[SW Health] Ping failed, consecutive failures:", consecutiveFailures);
+        logger.warn("[SW Health] Ping failed, consecutive failures:", consecutiveFailures);
         onUnhealthy?.();
 
         // Auto-recover after consecutive failures
         if (consecutiveFailures >= MAX_FAILURES_BEFORE_RECOVERY) {
-          console.log("[SW Health] Too many failures, triggering recovery...");
+          logger.log("[SW Health] Too many failures, triggering recovery...");
           await forceServiceWorkerRecovery();
           consecutiveFailures = 0;
         }
       }
     } catch (error) {
-      console.error("[SW Health] Check failed:", error);
+      logger.error("[SW Health] Check failed:", error);
       consecutiveFailures++;
       onUnhealthy?.();
     }
@@ -555,6 +556,6 @@ export function startServiceWorkerHealthMonitor(onHealthy?: () => void, onUnheal
     if (intervalId) {
       clearInterval(intervalId);
     }
-    console.log("[SW Health] Monitor stopped");
+    logger.log("[SW Health] Monitor stopped");
   };
 }

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Bell, Inbox } from 'lucide-react';
 import React from 'react';
 import { useNotificationPreferences } from './useNotificationPreferences';
+import { logger } from '@/lib/logger';
 
 /**
  * Hook that subscribes to Supabase Realtime for new notifications and trade inbox items.
@@ -65,7 +66,7 @@ export function useRealtimeNotificationEffects() {
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.15);
     } catch (error) {
-      console.error('Error playing notification sound:', error);
+      logger.error('Error playing notification sound:', error);
     }
   }, []);
 
@@ -134,7 +135,7 @@ export function useRealtimeNotificationEffects() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log('New notification received:', payload);
+          logger.log('New notification received:', payload);
           notifyUser();
           
           // Show in-app toast
@@ -161,7 +162,7 @@ export function useRealtimeNotificationEffects() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log('New trade inbox item received:', payload);
+          logger.log('New trade inbox item received:', payload);
           notifyUser();
           
           // Show in-app toast with ticker if available (always shows for trade inbox)

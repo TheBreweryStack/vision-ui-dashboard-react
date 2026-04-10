@@ -22,6 +22,7 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 // Enhanced alert types with full support
 const ALERT_TYPES = [
@@ -336,7 +337,7 @@ const Watchlist: React.FC = () => {
       fetchItemAlerts();
       setShowAlertModal(false);
     } catch (error: unknown) {
-      console.error('Alert save error:', error);
+      logger.error('Alert save error:', error);
       toast.error('Failed to save alert');
     } finally {
       setIsSaving(false);

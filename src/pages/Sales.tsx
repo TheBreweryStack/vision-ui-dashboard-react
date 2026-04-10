@@ -9,6 +9,7 @@ import { DollarSign, TrendingUp, TrendingDown, RefreshCw, Loader2, ArrowUpRight,
 import { supabase } from '@/lib/supabase';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface SalesSummary {
   gross_30d: number;
@@ -52,7 +53,7 @@ const Sales: React.FC = () => {
       setSummary(data.summary);
       setTransactions(data.transactions || []);
     } catch (err: unknown) {
-      console.error('Error fetching sales data:', err);
+      logger.error('Error fetching sales data:', err);
       setError((err instanceof Error ? err.message : null) || 'Failed to load sales data');
     } finally {
       setIsLoading(false);

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
 
 interface TaskCounts {
   [noteId: string]: {
@@ -52,7 +53,7 @@ export const useNoteTaskCounts = (noteIds: string[]) => {
 
       setTaskCounts(counts);
     } catch (error) {
-      console.error('Error fetching task counts:', error);
+      logger.error('Error fetching task counts:', error);
     } finally {
       setIsLoading(false);
     }

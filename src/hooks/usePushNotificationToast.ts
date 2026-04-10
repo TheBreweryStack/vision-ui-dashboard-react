@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { Bell } from 'lucide-react';
 import React from 'react';
+import { logger } from '@/lib/logger';
 
 /**
  * Hook that listens for push messages forwarded from the Service Worker
@@ -21,7 +22,7 @@ export function usePushNotificationToast() {
       
       const { title, body, url } = event.data.payload || {};
       
-      console.log('[PushToast] Received push notification:', { title, body, url });
+      logger.log('[PushToast] Received push notification:', { title, body, url });
       
       toast(title || 'New Notification', {
         description: body || undefined,
@@ -46,7 +47,7 @@ export function usePushNotificationToast() {
     };
 
     navigator.serviceWorker.addEventListener('message', handlePushMessage);
-    console.log('[PushToast] Listening for push notifications');
+    logger.log('[PushToast] Listening for push notifications');
     
     return () => {
       navigator.serviceWorker.removeEventListener('message', handlePushMessage);

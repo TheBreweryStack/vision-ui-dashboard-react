@@ -17,6 +17,7 @@ import {
 import { format, startOfWeek, endOfWeek, parseISO, subWeeks, isSameWeek } from 'date-fns';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface CloseWeekModalProps {
   open: boolean;
@@ -142,7 +143,7 @@ export const CloseWeekModal: React.FC<CloseWeekModalProps> = ({
       setWithdrawalAmount('0');
       setSelectedWeekIndex(0);
     } catch (error) {
-      console.error('Error closing week:', error);
+      logger.error('Error closing week:', error);
     } finally {
       setIsSaving(false);
     }

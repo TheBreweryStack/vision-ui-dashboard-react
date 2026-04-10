@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { useAppSettings, TwoFAEnforcement } from '@/hooks/useAppSettings';
+import { logger } from '@/lib/logger';
 
 interface AppSettingsModalProps {
   open: boolean;
@@ -112,7 +113,7 @@ export const AppSettingsModal: React.FC<AppSettingsModalProps> = ({ open, onOpen
       toast.success('Settings saved successfully');
       onOpenChange(false);
     } catch (error: unknown) {
-      console.error('Failed to save settings:', error);
+      logger.error('Failed to save settings:', error);
       toast.error('Failed to save settings');
     } finally {
       setIsSaving(false);

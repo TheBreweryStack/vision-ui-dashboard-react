@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
 
 interface TotpSetupResponse {
   success: boolean;
@@ -55,7 +56,7 @@ export function useTwoFactor() {
       const { data } = await supabase.auth.getSession();
       return data.session?.access_token ?? null;
     } catch (e) {
-      console.error('[useTwoFactor] Error getting session:', e);
+      logger.error('[useTwoFactor] Error getting session:', e);
       return null;
     }
   }, [session?.access_token, pending2FA?.session?.access_token]);
@@ -84,7 +85,7 @@ export function useTwoFactor() {
         verified: data?.verified ?? false,
       };
     } catch (err) {
-      console.error('Error checking 2FA status:', err);
+      logger.error('Error checking 2FA status:', err);
       return { enabled: false, verified: false };
     }
   }, [getUserId]);
@@ -259,7 +260,7 @@ export function useTwoFactor() {
 
       return data as TrustedDeviceResponse;
     } catch (err) {
-      console.error('Error checking trusted device:', err);
+      logger.error('Error checking trusted device:', err);
       return { trusted: false, reason: 'Check failed' };
     }
   }, [getAccessToken]);
@@ -322,7 +323,7 @@ export function useTwoFactor() {
 
       return data ?? [];
     } catch (err) {
-      console.error('Error fetching trusted devices:', err);
+      logger.error('Error fetching trusted devices:', err);
       return [];
     }
   }, [getUserId]);

@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { parseISO, startOfDay, addDays } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 // Helper to extract just the date part (YYYY-MM-DD) from a timestamp or date string
 function extractDateOnly(dateStr: string | null): string | null {
@@ -94,7 +95,7 @@ export const useReminders = () => {
       toast.success('Reminder added!');
     },
     onError: (error) => {
-      console.error('Error adding reminder:', error);
+      logger.error('Error adding reminder:', error);
       toast.error('Failed to add reminder');
     },
   });
@@ -138,7 +139,7 @@ export const useReminders = () => {
       queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
     },
     onError: (error) => {
-      console.error('Error updating reminder:', error);
+      logger.error('Error updating reminder:', error);
       toast.error('Failed to update reminder');
     },
   });
@@ -158,7 +159,7 @@ export const useReminders = () => {
       toast.success('Reminder deleted');
     },
     onError: (error) => {
-      console.error('Error deleting reminder:', error);
+      logger.error('Error deleting reminder:', error);
       toast.error('Failed to delete reminder');
     },
   });

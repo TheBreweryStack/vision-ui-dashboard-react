@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { ImportTradesTab } from './ImportTradesTab';
+import { logger } from '@/lib/logger';
 
 const tradeSchema = z.object({
   ticker: z.string().min(1, 'Ticker is required').max(10),
@@ -204,7 +205,7 @@ export function AddTradeGroupModal({ open, onOpenChange, onSubmit }: AddTradeGro
         toast.success(`${validUrls.length} image(s) uploaded`);
       }
     } catch (error: unknown) {
-      console.error('Image upload error:', error);
+      logger.error('Image upload error:', error);
       toast.error('Failed to upload image');
     } finally {
       setIsUploadingImage(false);

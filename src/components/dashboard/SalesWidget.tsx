@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { logger } from '@/lib/logger';
 
 interface SalesSummary {
   gross_30d: number;
@@ -56,7 +57,7 @@ export const SalesWidget: React.FC = () => {
       setSummary(data.summary);
       setTransactions(data.transactions || []);
     } catch (err: unknown) {
-      console.error('Error fetching sales data:', err);
+      logger.error('Error fetching sales data:', err);
       setError((err instanceof Error ? err.message : null) || 'Failed to load sales data');
     } finally {
       setIsLoading(false);

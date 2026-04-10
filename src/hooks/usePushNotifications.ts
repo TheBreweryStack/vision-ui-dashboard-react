@@ -9,6 +9,7 @@ import {
   isPushNotificationSubscribed,
   isSubscriptionValid
 } from '@/lib/pushNotifications';
+import { logger } from '@/lib/logger';
 
 export interface UsePushNotificationsReturn {
   isSupported: boolean;
@@ -32,10 +33,10 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
   // Check initial state
   const checkSubscriptionStatus = useCallback(async () => {
-    console.log('[usePushNotifications] Starting check for user:', user?.id);
+    logger.log('[usePushNotifications] Starting check for user:', user?.id);
     
     if (!user) {
-      console.log('[usePushNotifications] No user, setting loading false');
+      logger.log('[usePushNotifications] No user, setting loading false');
       setIsLoading(false);
       return;
     }
@@ -43,29 +44,29 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     setIsLoading(true);
     try {
       const supported = isPushNotificationSupported();
-      console.log('[usePushNotifications] Push supported:', supported);
+      logger.log('[usePushNotifications] Push supported:', supported);
       setIsSupported(supported);
 
       if (!supported) {
-        console.log('[usePushNotifications] Push not supported, exiting');
+        logger.log('[usePushNotifications] Push not supported, exiting');
         setIsLoading(false);
         return;
       }
 
       const currentPermission = getNotificationPermission();
-      console.log('[usePushNotifications] Current permission:', currentPermission);
+      logger.log('[usePushNotifications] Current permission:', currentPermission);
       setPermission(currentPermission);
 
       const subscribed = await isPushNotificationSubscribed();
-      console.log('[usePushNotifications] Is subscribed:', subscribed);
+      logger.log('[usePushNotifications] Is subscribed:', subscribed);
       setIsSubscribed(subscribed);
 
       // Check if subscription is still valid (VAPID key matches)
       if (subscribed) {
         const valid = await isSubscriptionValid(user.id);
-        console.log('[usePushNotifications] Subscription valid:', valid);
+        logger.log('[usePushNotifications] Subscription valid:', valid);
         if (!valid) {
-          console.log('[usePushNotifications] Subscription invalid, needs re-subscribe');
+          logger.log('[usePushNotifications] Subscription invalid, needs re-subscribe');
           setNeedsResubscribe(true);
           setIsSubscribed(false); // Mark as not subscribed since it's invalid
         } else {
@@ -75,9 +76,9 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         setNeedsResubscribe(false);
       }
     } catch (error) {
-      console.error('[usePushNotifications] Check failed:', error);
+      logger.error('[usePushNotifications] Check failed:', error);
     } finally {
-      console.log('[usePushNotifications] Check complete, setting loading false');
+      logger.log('[usePushNotifications] Check complete, setting loading false');
       setIsLoading(false);
     }
   }, [user]);
@@ -99,7 +100,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   // Subscribe to push notifications
   const subscribe = useCallback(async (): Promise<boolean> => {
     if (!user) {
-      console.warn('[usePushNotifications] No user logged in');
+      logger.warn('[usePushNotifications] No user logged in');
       return false;
     }
 
@@ -113,7 +114,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       }
       return success;
     } catch (error) {
-      console.error('[usePushNotifications] Subscribe failed:', error);
+      logger.error('[usePushNotifications] Subscribe failed:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -123,7 +124,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   // Unsubscribe from push notifications
   const unsubscribe = useCallback(async (): Promise<boolean> => {
     if (!user) {
-      console.warn('[usePushNotifications] No user logged in');
+      logger.warn('[usePushNotifications] No user logged in');
       return false;
     }
 
@@ -136,7 +137,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       }
       return success;
     } catch (error) {
-      console.error('[usePushNotifications] Unsubscribe failed:', error);
+      logger.error('[usePushNotifications] Unsubscribe failed:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -146,7 +147,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   // Resubscribe: unsubscribe old, subscribe new
   const resubscribe = useCallback(async (): Promise<boolean> => {
     if (!user) {
-      console.warn('[usePushNotifications] No user logged in');
+      logger.warn('[usePushNotifications] No user logged in');
       return false;
     }
 
@@ -161,11 +162,11 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         setIsSubscribed(true);
         setPermission('granted');
         setNeedsResubscribe(false);
-        console.log('[usePushNotifications] Re-subscription successful');
+        logger.log('[usePushNotifications] Re-subscription successful');
       }
       return success;
     } catch (error) {
-      console.error('[usePushNotifications] Resubscribe failed:', error);
+      logger.error('[usePushNotifications] Resubscribe failed:', error);
       return false;
     } finally {
       setIsLoading(false);

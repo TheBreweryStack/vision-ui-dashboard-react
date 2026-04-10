@@ -15,6 +15,7 @@ import { TickerLogo } from '@/components/common/TickerLogo';
 import { supabase } from '@/lib/supabase';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
+import { logger } from '@/lib/logger';
 
 interface FinnhubNewsItem {
   headline: string;
@@ -106,7 +107,7 @@ const Market: React.FC = () => {
         setSearchResults([]);
       }
     } catch (err) {
-      console.error('Search error:', err);
+      logger.error('Search error:', err);
       setSearchResults([]);
     } finally {
       setSearchLoading(false);

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Bell, Clock } from 'lucide-react';
 import React from 'react';
 import { useNotificationPreferences } from './useNotificationPreferences';
+import { logger } from '@/lib/logger';
 
 const POLL_INTERVAL_MS = 30_000; // 30 seconds
 
@@ -76,7 +77,7 @@ export function useLocalAlerts() {
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.15);
     } catch (error) {
-      console.error('[LocalAlerts] Error playing sound:', error);
+      logger.error('[LocalAlerts] Error playing sound:', error);
     }
   }, []);
 
@@ -93,7 +94,7 @@ export function useLocalAlerts() {
     
     // Check if service worker is available
     if (!('serviceWorker' in navigator)) {
-      console.log('[LocalAlerts] Service Worker not supported, skipping browser notification');
+      logger.log('[LocalAlerts] Service Worker not supported, skipping browser notification');
       return;
     }
     
@@ -110,9 +111,9 @@ export function useLocalAlerts() {
         tag: 'reminder-alert'
       });
       
-      console.log('[LocalAlerts] Sent notification via Service Worker');
+      logger.log('[LocalAlerts] Sent notification via Service Worker');
     } catch (error) {
-      console.error('[LocalAlerts] SW notification error, falling back:', error);
+      logger.error('[LocalAlerts] SW notification error, falling back:', error);
       
       // Fallback to direct notification if SW fails
       try {
@@ -122,7 +123,7 @@ export function useLocalAlerts() {
           tag: 'reminder-alert'
         });
       } catch (e) {
-        console.error('[LocalAlerts] Fallback notification also failed:', e);
+        logger.error('[LocalAlerts] Fallback notification also failed:', e);
       }
     }
   }, []);
@@ -185,13 +186,13 @@ export function useLocalAlerts() {
           .or(`due_at.lte.${now},and(due_at.is.null,reminder_time.lte.${now})`);
 
         if (error) {
-          console.error('[LocalAlerts] Error fetching due reminders:', error);
+          logger.error('[LocalAlerts] Error fetching due reminders:', error);
           return;
         }
 
         if (!dueReminders?.length) return;
 
-        console.log(`[LocalAlerts] Found ${dueReminders.length} due reminders`);
+        logger.log(`[LocalAlerts] Found ${dueReminders.length} due reminders`);
 
         // Process each due reminder
         for (const reminder of dueReminders) {
@@ -216,7 +217,7 @@ export function useLocalAlerts() {
         queryClient.invalidateQueries({ queryKey: ['reminders', user.id] });
         queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
       } catch (error) {
-        console.error('[LocalAlerts] Error in checkDueReminders:', error);
+        logger.error('[LocalAlerts] Error in checkDueReminders:', error);
       }
     };
 
@@ -232,7 +233,7 @@ export function useLocalAlerts() {
   // Request browser notification permission (called from UI)
   const requestPermission = useCallback(async (): Promise<boolean> => {
     if (!('Notification' in window)) {
-      console.log('[LocalAlerts] Browser does not support notifications');
+      logger.log('[LocalAlerts] Browser does not support notifications');
       return false;
     }
 
@@ -241,7 +242,7 @@ export function useLocalAlerts() {
       notificationPermissionRef.current = permission;
       return permission === 'granted';
     } catch (error) {
-      console.error('[LocalAlerts] Error requesting permission:', error);
+      logger.error('[LocalAlerts] Error requesting permission:', error);
       return false;
     }
   }, []);

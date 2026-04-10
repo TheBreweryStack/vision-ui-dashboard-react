@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { TradeInboxItem, ParsedTrade, GmailVerificationData } from '@/lib/tradeInbox';
+import { logger } from '@/lib/logger';
 
 const fetchTradeInbox = async (userId: string): Promise<TradeInboxItem[]> => {
   const { data, error } = await supabase
@@ -66,7 +67,7 @@ export const useTradeInbox = () => {
         )
       );
     } catch (error) {
-      console.error('Error updating trade inbox item:', error);
+      logger.error('Error updating trade inbox item:', error);
       toast.error('Failed to update item');
       throw error;
     }
@@ -87,7 +88,7 @@ export const useTradeInbox = () => {
       );
       toast.success('Item deleted');
     } catch (error) {
-      console.error('Error deleting trade inbox item:', error);
+      logger.error('Error deleting trade inbox item:', error);
       toast.error('Failed to delete item');
     }
   };

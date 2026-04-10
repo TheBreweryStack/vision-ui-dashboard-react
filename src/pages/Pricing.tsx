@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { PlanBadge } from '@/components/common/PlanBadge';
+import { logger } from '@/lib/logger';
 
 interface PricingPlan {
   id: string;
@@ -122,7 +123,7 @@ const Pricing: React.FC = () => {
       toast.success('Trial started! You have 7 days of full access.');
       navigate('/dashboard');
     } catch (error) {
-      console.error('Error starting trial:', error);
+      logger.error('Error starting trial:', error);
       toast.error('Failed to start trial. Please try again.');
     } finally {
       setIsLoading(null);
@@ -165,7 +166,7 @@ const Pricing: React.FC = () => {
         throw new Error('No checkout URL returned');
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      logger.error('Error creating checkout session:', error);
       toast.error('Failed to start checkout. Please try again.');
     } finally {
       setIsLoading(null);

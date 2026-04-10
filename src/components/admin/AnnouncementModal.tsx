@@ -17,6 +17,7 @@ import { Loader2, CalendarIcon, Pin, PinOff, Trash2, Clock } from 'lucide-react'
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface AnnouncementModalProps {
   open: boolean;
@@ -151,7 +152,7 @@ export function AnnouncementModal({ open, onOpenChange, announcement, onSave }: 
       
       onOpenChange(false);
     } catch (error) {
-      console.error('Error saving announcement:', error);
+      logger.error('Error saving announcement:', error);
       toast.error('Failed to save announcement');
     } finally {
       setIsSaving(false);

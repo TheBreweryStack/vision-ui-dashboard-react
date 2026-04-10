@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { TradeGroupWithFills } from '@/hooks/useTradeGroups';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { logger } from '@/lib/logger';
 
 interface MergePositionsModalProps {
   open: boolean;
@@ -189,7 +190,7 @@ function MergePositionsContent({
       onMergeComplete();
       onOpenChange(false);
     } catch (error) {
-      console.error('Error merging positions:', error);
+      logger.error('Error merging positions:', error);
       toast.error('Failed to merge positions');
     } finally {
       setIsMerging(false);

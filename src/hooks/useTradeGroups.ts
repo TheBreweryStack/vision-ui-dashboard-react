@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { toast } from 'sonner';
 import { getPrefetchedData } from './useDataPrefetch';
+import { logger } from '@/lib/logger';
 
 export interface TradeGroup {
   id: string;
@@ -112,7 +113,7 @@ export const useTradeGroups = () => {
 
         if (rpcError) {
           // Fallback to legacy fetch if RPC fails
-          console.warn('RPC failed, falling back to legacy fetch:', rpcError);
+          logger.warn('RPC failed, falling back to legacy fetch:', rpcError);
           await fetchGroupsLegacy();
           return;
         }
@@ -147,7 +148,7 @@ export const useTradeGroups = () => {
         setGroups(groupsWithFills);
       }
     } catch (error) {
-      console.error('Error fetching trade groups:', error);
+      logger.error('Error fetching trade groups:', error);
       toast.error('Failed to load trades');
     } finally {
       setIsLoading(false);
@@ -249,7 +250,7 @@ export const useTradeGroups = () => {
     const { data, error } = await query.order('entry_date', { ascending: true }).limit(1);
 
     if (error) {
-      console.error('Error finding matching group:', error);
+      logger.error('Error finding matching group:', error);
       return null;
     }
 
@@ -358,7 +359,7 @@ export const useTradeGroups = () => {
       await fetchGroups();
       return { data: { ...group, status: group.status as 'open' | 'closed' }, error: null };
     } catch (error) {
-      console.error('Error creating trade group:', error);
+      logger.error('Error creating trade group:', error);
       return { data: null, error: error as Error };
     }
   };
@@ -426,7 +427,7 @@ export const useTradeGroups = () => {
       await fetchGroups();
       return { error: null };
     } catch (error) {
-      console.error('Error adding to position:', error);
+      logger.error('Error adding to position:', error);
       return { error: error as Error };
     }
   };
@@ -515,7 +516,7 @@ export const useTradeGroups = () => {
       await fetchGroups();
       return { error: null };
     } catch (error) {
-      console.error('Error closing position:', error);
+      logger.error('Error closing position:', error);
       return { error: error as Error };
     }
   };
@@ -536,7 +537,7 @@ export const useTradeGroups = () => {
       await fetchGroups();
       return { error: null };
     } catch (error) {
-      console.error('Error updating trade group:', error);
+      logger.error('Error updating trade group:', error);
       return { error: error as Error };
     }
   };
@@ -554,7 +555,7 @@ export const useTradeGroups = () => {
       await fetchGroups();
       return { error: null };
     } catch (error) {
-      console.error('Error deleting trade group:', error);
+      logger.error('Error deleting trade group:', error);
       return { error: error as Error };
     }
   };

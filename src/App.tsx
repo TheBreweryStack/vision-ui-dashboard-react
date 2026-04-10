@@ -18,6 +18,7 @@ import { startServiceWorkerHealthMonitor } from "@/lib/pushNotifications";
 import { usePushNotificationToast } from "@/hooks/usePushNotificationToast";
 import { FirstTimeNotificationPrompt } from "@/components/notifications/FirstTimeNotificationPrompt";
 import { checkForUpdates, clearCachesAndReload } from "@/lib/buildInfo";
+import { logger } from '@/lib/logger';
 
 // Lazy load pages for code splitting
 const Auth = lazy(() => import("@/pages/Auth"));
@@ -86,15 +87,15 @@ const AppContent = () => {
   // Startup check - runs once when app opens
   useEffect(() => {
     const checkStartup = async () => {
-      console.log('[Build] Startup check...');
+      logger.log('[Build] Startup check...');
       const hasUpdate = await checkForUpdates();
       if (hasUpdate) {
-        console.log('[Build] New version found on startup, updating...');
+        logger.log('[Build] New version found on startup, updating...');
         setIsUpdating(true);
         await clearCachesAndReload();
         return; // Page will reload
       }
-      console.log('[Build] App is up to date');
+      logger.log('[Build] App is up to date');
       setIsStartupComplete(true);
     };
     
@@ -106,10 +107,10 @@ const AppContent = () => {
     const handleVisibilityChange = async () => {
       if (document.hidden) return;
       
-      console.log('[Build] App resumed, checking for updates...');
+      logger.log('[Build] App resumed, checking for updates...');
       const hasUpdate = await checkForUpdates();
       if (hasUpdate) {
-        console.log('[Build] New version found on resume, updating...');
+        logger.log('[Build] New version found on resume, updating...');
         setIsStartupComplete(false);
         setIsUpdating(true);
         await clearCachesAndReload();
@@ -127,7 +128,7 @@ const AppContent = () => {
     const runCheck = async () => {
       const hasUpdate = await checkForUpdates();
       if (hasUpdate) {
-        console.log('[Build] New version available');
+        logger.log('[Build] New version available');
         promptForUpdate();
       }
     };
@@ -147,7 +148,7 @@ const AppContent = () => {
     
     const cleanup = startServiceWorkerHealthMonitor(
       () => {}, // Silent on healthy
-      () => console.warn('[App] Service Worker unhealthy, recovery in progress...')
+      () => logger.warn('[App] Service Worker unhealthy, recovery in progress...')
     );
     
     return cleanup;

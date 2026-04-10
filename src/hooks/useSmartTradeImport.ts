@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { ParsedTrade } from '@/lib/tradeInbox';
 import { TradeGroup, useTradeGroups } from './useTradeGroups';
+import { logger } from '@/lib/logger';
 
 interface SmartImportResult {
   data: TradeGroup | null;
@@ -82,7 +83,7 @@ export const useSmartTradeImport = () => {
 
       return { data: { ...group, status: group.status as 'open' | 'closed' }, error: null };
     } catch (error) {
-      console.error('Error creating trade group:', error);
+      logger.error('Error creating trade group:', error);
       return { data: null, error: error as Error };
     }
   };
@@ -267,7 +268,7 @@ export const useSmartTradeImport = () => {
         };
       }
     } catch (error) {
-      console.error('Smart import error:', error);
+      logger.error('Smart import error:', error);
       return {
         data: null,
         error: error as Error,

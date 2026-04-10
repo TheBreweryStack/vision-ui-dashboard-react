@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, Watchlist, WatchlistItem } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export const useWatchlists = () => {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ export const useWatchlists = () => {
       if (error) throw error;
       setWatchlists(data || []);
     } catch (error) {
-      console.error('Error fetching watchlists:', error);
+      logger.error('Error fetching watchlists:', error);
       toast.error('Failed to load watchlists');
     } finally {
       setIsLoading(false);
@@ -44,7 +45,7 @@ export const useWatchlists = () => {
       if (error) throw error;
       setItems(data || []);
     } catch (error) {
-      console.error('Error fetching watchlist items:', error);
+      logger.error('Error fetching watchlist items:', error);
       toast.error('Failed to load items');
     }
   }, []);
@@ -69,7 +70,7 @@ export const useWatchlists = () => {
       toast.success('Watchlist created!');
       return { data, error: null };
     } catch (error) {
-      console.error('Error creating watchlist:', error);
+      logger.error('Error creating watchlist:', error);
       toast.error('Failed to create watchlist');
       return { data: null, error };
     }
@@ -92,7 +93,7 @@ export const useWatchlists = () => {
       toast.success('Watchlist deleted');
       return { error: null };
     } catch (error) {
-      console.error('Error deleting watchlist:', error);
+      logger.error('Error deleting watchlist:', error);
       toast.error('Failed to delete watchlist');
       return { error };
     }
@@ -124,7 +125,7 @@ export const useWatchlists = () => {
       toast.success('Ticker added!');
       return { data, error: null };
     } catch (error) {
-      console.error('Error adding item:', error);
+      logger.error('Error adding item:', error);
       toast.error('Failed to add ticker');
       return { data: null, error };
     }
@@ -144,7 +145,7 @@ export const useWatchlists = () => {
       setItems(prev => prev.map(i => i.id === id ? data : i));
       return { data, error: null };
     } catch (error) {
-      console.error('Error updating item:', error);
+      logger.error('Error updating item:', error);
       toast.error('Failed to update ticker');
       return { data: null, error };
     }
@@ -163,7 +164,7 @@ export const useWatchlists = () => {
       toast.success('Ticker removed');
       return { error: null };
     } catch (error) {
-      console.error('Error deleting item:', error);
+      logger.error('Error deleting item:', error);
       toast.error('Failed to remove ticker');
       return { error };
     }
@@ -189,7 +190,7 @@ export const useWatchlists = () => {
       toast.success('Default watchlist set');
       return { error: null };
     } catch (error) {
-      console.error('Error setting default watchlist:', error);
+      logger.error('Error setting default watchlist:', error);
       toast.error('Failed to set default watchlist');
       return { error };
     }

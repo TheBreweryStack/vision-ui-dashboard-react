@@ -9,6 +9,7 @@ import {
 } from '@/lib/pushNotifications';
 import type { DeviceMetadata } from '@/lib/deviceMetadata';
 import { getDeviceIcon, generateDeviceLabel, getDeviceTypeLabel } from '@/lib/deviceMetadata';
+import { logger } from '@/lib/logger';
 
 export interface PushSubscription {
   id: string;
@@ -107,7 +108,7 @@ export async function getCurrentDeviceEndpoint(): Promise<string | null> {
       
       // Check if SW is actually controlling the page (not just ready)
       if (!navigator.serviceWorker.controller && attempt < maxRetries - 1) {
-        console.log('[usePushSubscriptions] SW ready but not controlling, waiting...');
+        logger.log('[usePushSubscriptions] SW ready but not controlling, waiting...');
         await new Promise(resolve => setTimeout(resolve, retryDelay));
         continue;
       }
@@ -115,21 +116,21 @@ export async function getCurrentDeviceEndpoint(): Promise<string | null> {
       const subscription = await registration.pushManager.getSubscription();
       
       if (subscription?.endpoint) {
-        console.log('[usePushSubscriptions] Found endpoint on attempt', attempt + 1);
+        logger.log('[usePushSubscriptions] Found endpoint on attempt', attempt + 1);
         return subscription.endpoint;
       }
       
       // Wait before retrying (except on last attempt)
       if (attempt < maxRetries - 1) {
-        console.log('[usePushSubscriptions] No subscription found, retrying in', retryDelay, 'ms...');
+        logger.log('[usePushSubscriptions] No subscription found, retrying in', retryDelay, 'ms...');
         await new Promise(resolve => setTimeout(resolve, retryDelay));
       }
     }
     
-    console.log('[usePushSubscriptions] No subscription after', maxRetries, 'retries');
+    logger.log('[usePushSubscriptions] No subscription after', maxRetries, 'retries');
     return null;
   } catch (error) {
-    console.error('[usePushSubscriptions] Error getting current endpoint:', error);
+    logger.error('[usePushSubscriptions] Error getting current endpoint:', error);
     return null;
   }
 }
@@ -163,7 +164,7 @@ export function usePushSubscriptions() {
       if (error) throw error;
       setSubscriptions((data as unknown as PushSubscription[]) || []);
     } catch (error) {
-      console.error('[usePushSubscriptions] Fetch error:', error);
+      logger.error('[usePushSubscriptions] Fetch error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -173,18 +174,18 @@ export function usePushSubscriptions() {
     setIsEndpointLoading(true);
     try {
       // Ensure SW is registered and active before checking subscription
-      console.log('[usePushSubscriptions] Ensuring SW is registered...');
+      logger.log('[usePushSubscriptions] Ensuring SW is registered...');
       await registerServiceWorker();
       
-      console.log('[usePushSubscriptions] Checking current endpoint...');
+      logger.log('[usePushSubscriptions] Checking current endpoint...');
       const endpoint = await getCurrentDeviceEndpoint();
-      console.log('[usePushSubscriptions] Current endpoint:', endpoint ? endpoint.slice(0, 50) + '...' : 'null');
+      logger.log('[usePushSubscriptions] Current endpoint:', endpoint ? endpoint.slice(0, 50) + '...' : 'null');
       
       // SILENT RECOVERY: If permission granted but no subscription, auto-resubscribe
       // But ONLY if we haven't already attempted recovery this session
       if (!endpoint && user && !hasAttemptedRecoveryRef.current) {
         const permission = getNotificationPermission();
-        console.log('[usePushSubscriptions] Current permission:', permission);
+        logger.log('[usePushSubscriptions] Current permission:', permission);
         
         if (permission === 'granted') {
           // Mark that we're attempting recovery BEFORE doing anything
@@ -192,7 +193,7 @@ export function usePushSubscriptions() {
           
           // Check if we already have a subscription in DB for this device
           const deviceId = getOrCreateDeviceId();
-          console.log('[usePushSubscriptions] Checking DB for device:', deviceId.slice(0, 8) + '...');
+          logger.log('[usePushSubscriptions] Checking DB for device:', deviceId.slice(0, 8) + '...');
           
           const { data: existingRow } = await supabase
             .from('push_subscriptions')
@@ -203,7 +204,7 @@ export function usePushSubscriptions() {
           
           if (existingRow) {
             // Device already has a subscription in DB - skip recovery
-            console.log('[usePushSubscriptions] DB has subscription for this device, skipping recovery');
+            logger.log('[usePushSubscriptions] DB has subscription for this device, skipping recovery');
             // Use the endpoint from DB as current (even if browser lost it temporarily)
             setCurrentEndpoint(existingRow.endpoint);
             setIsEndpointLoading(false);
@@ -211,11 +212,11 @@ export function usePushSubscriptions() {
           }
           
           // No subscription in DB for this device - proceed with recovery
-          console.log('[usePushSubscriptions] No existing subscription for device, attempting recovery...');
+          logger.log('[usePushSubscriptions] No existing subscription for device, attempting recovery...');
           const recovered = await subscribeToPushNotifications(user.id);
           
           if (recovered) {
-            console.log('[usePushSubscriptions] Silent recovery successful!');
+            logger.log('[usePushSubscriptions] Silent recovery successful!');
             // Get the new endpoint
             const newEndpoint = await getCurrentDeviceEndpoint();
             setCurrentEndpoint(newEndpoint);
@@ -223,14 +224,14 @@ export function usePushSubscriptions() {
             await fetchSubscriptions();
             return; // Exit early, state is already set
           } else {
-            console.log('[usePushSubscriptions] Silent recovery failed - user may need to manually enable');
+            logger.log('[usePushSubscriptions] Silent recovery failed - user may need to manually enable');
           }
         }
       }
       
       setCurrentEndpoint(endpoint);
     } catch (error) {
-      console.error('[usePushSubscriptions] Error fetching endpoint:', error);
+      logger.error('[usePushSubscriptions] Error fetching endpoint:', error);
     } finally {
       setIsEndpointLoading(false);
     }
@@ -244,8 +245,8 @@ export function usePushSubscriptions() {
   // Debug logging when subscriptions or endpoint change
   useEffect(() => {
     if (!isLoading && !isEndpointLoading) {
-      console.log('[usePushSubscriptions] DB subscriptions:', subscriptions.map(s => s.endpoint.slice(0, 50)));
-      console.log('[usePushSubscriptions] Match found:', subscriptions.some(sub => sub.endpoint === currentEndpoint));
+      logger.log('[usePushSubscriptions] DB subscriptions:', subscriptions.map(s => s.endpoint.slice(0, 50)));
+      logger.log('[usePushSubscriptions] Match found:', subscriptions.some(sub => sub.endpoint === currentEndpoint));
     }
   }, [subscriptions, currentEndpoint, isLoading, isEndpointLoading]);
 
@@ -265,7 +266,7 @@ export function usePushSubscriptions() {
       setSubscriptions(prev => prev.filter(s => s.id !== subscriptionId));
       return true;
     } catch (error) {
-      console.error('[usePushSubscriptions] Remove error:', error);
+      logger.error('[usePushSubscriptions] Remove error:', error);
       return false;
     } finally {
       setIsRemovingDevice(null);
@@ -285,7 +286,7 @@ export function usePushSubscriptions() {
 
       // If stale subscriptions were cleaned up, refresh the list
       if (data?.staleDeleted) {
-        console.log('[usePushSubscriptions] Stale entries deleted, refreshing list...');
+        logger.log('[usePushSubscriptions] Stale entries deleted, refreshing list...');
         await fetchSubscriptions();
       }
 
@@ -294,7 +295,7 @@ export function usePushSubscriptions() {
         message: data?.message ?? 'Unknown result',
       };
     } catch (error) {
-      console.error('[usePushSubscriptions] Test error:', error);
+      logger.error('[usePushSubscriptions] Test error:', error);
       return { success: false, message: 'Failed to send test notification' };
     } finally {
       setIsTestingDevice(null);
@@ -323,7 +324,7 @@ export function usePushSubscriptions() {
       );
       return true;
     } catch (error) {
-      console.error('[usePushSubscriptions] Update label error:', error);
+      logger.error('[usePushSubscriptions] Update label error:', error);
       return false;
     }
   }, [user]);

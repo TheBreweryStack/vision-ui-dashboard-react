@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import { TickerLogo } from '@/components/common/TickerLogo';
 import TradeContextDialog from './TradeContextDialog';
+import { logger } from '@/lib/logger';
 
 interface Trade {
   id: string;
@@ -78,7 +79,7 @@ const TradesAnalyzedSection: React.FC = () => {
 
       setTrades(tradesWithStatus);
     } catch (error) {
-      console.error('Error fetching trades:', error);
+      logger.error('Error fetching trades:', error);
     } finally {
       setIsLoading(false);
     }

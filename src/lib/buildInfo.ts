@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 /**
  * Build version and cache management utilities
  */
@@ -28,8 +29,8 @@ export async function checkForUpdates(): Promise<boolean> {
  * Log build info to console for debugging
  */
 export function logBuildInfo(): void {
-  console.log(`[Build] Version: ${BUILD_VERSION}`);
-  console.log(`[Build] Time: ${BUILD_TIME}`);
+  logger.log(`[Build] Version: ${BUILD_VERSION}`);
+  logger.log(`[Build] Time: ${BUILD_TIME}`);
 }
 
 /**
@@ -45,13 +46,13 @@ export function handleVersionChange(): boolean {
     return false;
   }
 
-  console.log(`[Build] Version changed: ${storedVersion} → ${BUILD_VERSION}`);
+  logger.log(`[Build] Version changed: ${storedVersion} → ${BUILD_VERSION}`);
   
   // Version changed - clear caches
   if ('caches' in window) {
     caches.keys().then((names) => {
       names.forEach((name) => {
-        console.log(`[Build] Clearing cache: ${name}`);
+        logger.log(`[Build] Clearing cache: ${name}`);
         caches.delete(name);
       });
     });
@@ -61,7 +62,7 @@ export function handleVersionChange(): boolean {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((registration) => {
-        console.log(`[Build] Unregistering service worker:`, registration.scope);
+        logger.log(`[Build] Unregistering service worker:`, registration.scope);
         registration.unregister();
       });
     });
@@ -78,13 +79,13 @@ export function handleVersionChange(): boolean {
  * Used for seamless updates during app startup
  */
 export async function clearCachesAndReload(): Promise<void> {
-  console.log('[Build] Clearing caches and reloading...');
+  logger.log('[Build] Clearing caches and reloading...');
   
   // Clear all caches
   if ('caches' in window) {
     const names = await caches.keys();
     await Promise.all(names.map((name) => {
-      console.log(`[Build] Clearing cache: ${name}`);
+      logger.log(`[Build] Clearing cache: ${name}`);
       return caches.delete(name);
     }));
   }

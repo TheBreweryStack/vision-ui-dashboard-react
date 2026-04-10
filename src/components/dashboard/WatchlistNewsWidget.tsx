@@ -9,6 +9,7 @@ import { Newspaper, ExternalLink, RefreshCw, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { subDays, format } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 interface NewsItem {
   title: string;
@@ -148,7 +149,7 @@ export const WatchlistNewsWidget: React.FC = () => {
         setNews([]);
       }
     } catch (err) {
-      console.error('Error fetching watchlist news:', err);
+      logger.error('Error fetching watchlist news:', err);
       // Keep existing news on error
     } finally {
       setIsLoading(false);

@@ -10,6 +10,7 @@ import { format, parseISO, isBefore } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { AnnouncementModal } from './AnnouncementModal';
+import { logger } from '@/lib/logger';
 
 interface AnnouncementsTabProps {
   onBack?: () => void;
@@ -33,7 +34,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
       if (error) throw error;
       setAnnouncements(data || []);
     } catch (error) {
-      console.error('Error fetching announcements:', error);
+      logger.error('Error fetching announcements:', error);
       toast.error('Failed to load announcements');
     } finally {
       setIsLoading(false);
@@ -77,7 +78,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
       setAnnouncements(prev => prev.filter(a => a.id !== id));
       toast.success('Announcement deleted');
     } catch (error) {
-      console.error('Error deleting announcement:', error);
+      logger.error('Error deleting announcement:', error);
       toast.error('Failed to delete announcement');
     }
   };
@@ -96,7 +97,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
       ));
       toast.success(ann.is_pinned ? 'Announcement unpinned' : 'Announcement pinned');
     } catch (error) {
-      console.error('Error toggling pin:', error);
+      logger.error('Error toggling pin:', error);
       toast.error('Failed to update announcement');
     }
   };

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, Note } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export const useNotes = () => {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ export const useNotes = () => {
       if (error) throw error;
       setNotes(data || []);
     } catch (error) {
-      console.error('Error fetching notes:', error);
+      logger.error('Error fetching notes:', error);
       toast.error('Failed to load notes');
     } finally {
       setIsLoading(false);
@@ -52,7 +53,7 @@ export const useNotes = () => {
       toast.success('Note created!');
       return { data, error: null };
     } catch (error) {
-      console.error('Error adding note:', error);
+      logger.error('Error adding note:', error);
       toast.error('Failed to create note');
       return { data: null, error };
     }
@@ -72,7 +73,7 @@ export const useNotes = () => {
       setNotes(prev => prev.map(n => n.id === id ? data : n));
       return { data, error: null };
     } catch (error) {
-      console.error('Error updating note:', error);
+      logger.error('Error updating note:', error);
       toast.error('Failed to update note');
       return { data: null, error };
     }
@@ -91,7 +92,7 @@ export const useNotes = () => {
       toast.success('Note deleted');
       return { error: null };
     } catch (error) {
-      console.error('Error deleting note:', error);
+      logger.error('Error deleting note:', error);
       toast.error('Failed to delete note');
       return { error };
     }

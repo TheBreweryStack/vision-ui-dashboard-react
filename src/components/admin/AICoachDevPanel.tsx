@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 interface Trade {
   id: string;
@@ -57,7 +58,7 @@ const AICoachDevPanel: React.FC = () => {
           setSelectedTradeId(data[0].id);
         }
       } catch (error) {
-        console.error('Error fetching trades:', error);
+        logger.error('Error fetching trades:', error);
         toast.error('Failed to load trades');
       } finally {
         setIsLoadingTrades(false);

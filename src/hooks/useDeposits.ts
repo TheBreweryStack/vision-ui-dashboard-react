@@ -4,6 +4,7 @@ import { supabase, Deposit } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 const fetchDeposits = async (userId: string, portfolioId: string | null): Promise<Deposit[]> => {
   let query = supabase
@@ -61,7 +62,7 @@ export const useDeposits = () => {
       toast.success(`${type} recorded!`);
     },
     onError: (error) => {
-      console.error('Error adding deposit:', error);
+      logger.error('Error adding deposit:', error);
       toast.error('Failed to record transaction');
     },
   });
@@ -83,7 +84,7 @@ export const useDeposits = () => {
       toast.success('Transaction deleted');
     },
     onError: (error) => {
-      console.error('Error deleting deposit:', error);
+      logger.error('Error deleting deposit:', error);
       toast.error('Failed to delete transaction');
     },
   });

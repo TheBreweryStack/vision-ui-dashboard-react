@@ -4,6 +4,7 @@ import { supabase, WeeklyBalance } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 const fetchWeeklyBalances = async (userId: string, portfolioId: string | null): Promise<WeeklyBalance[]> => {
   let query = supabase
@@ -60,7 +61,7 @@ export function useWeeklyBalances() {
       toast.success('Week closed successfully!');
     },
     onError: (error) => {
-      console.error('Error adding weekly balance:', error);
+      logger.error('Error adding weekly balance:', error);
       toast.error('Failed to close week');
     },
   });
@@ -84,7 +85,7 @@ export function useWeeklyBalances() {
       toast.success('Week updated');
     },
     onError: (error) => {
-      console.error('Error updating weekly balance:', error);
+      logger.error('Error updating weekly balance:', error);
       toast.error('Failed to update week');
     },
   });
@@ -106,7 +107,7 @@ export function useWeeklyBalances() {
       toast.success('Week deleted');
     },
     onError: (error) => {
-      console.error('Error deleting weekly balance:', error);
+      logger.error('Error deleting weekly balance:', error);
       toast.error('Failed to delete week');
     },
   });

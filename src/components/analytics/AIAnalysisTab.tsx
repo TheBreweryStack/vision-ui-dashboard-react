@@ -12,6 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import TradesAnalyzedSection from './TradesAnalyzedSection';
+import { logger } from '@/lib/logger';
 
 interface InsightPayload {
   summary: string;
@@ -95,7 +96,7 @@ const AIAnalysisTab: React.FC = () => {
           setLastGenerated(data.created_at);
         }
       } catch (error) {
-        console.error('Error loading cached insights:', error);
+        logger.error('Error loading cached insights:', error);
       } finally {
         setIsLoadingCached(false);
       }
@@ -137,7 +138,7 @@ const AIAnalysisTab: React.FC = () => {
         toast.error('No closed trades found. Close some trades first to generate insights.');
       }
     } catch (error: unknown) {
-      console.error('Error generating insights:', error);
+      logger.error('Error generating insights:', error);
       toast.error(error.message || 'Failed to generate insights');
     } finally {
       setIsGenerating(false);

@@ -16,6 +16,7 @@ import { NoteTasksSection } from '@/components/notes/NoteTasksSection';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 // Link Preview interface with AI summary
 interface LinkPreview {
@@ -111,7 +112,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
           }
         } catch (err) {
           // Ignore errors for invalid URLs
-          console.error('Link preview error:', err);
+          logger.error('Link preview error:', err);
         }
       }
     };
@@ -137,7 +138,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
       });
       setIsSaved(true);
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      logger.error('Auto-save failed:', error);
     } finally {
       setIsSaving(false);
     }
@@ -219,7 +220,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
       });
       setIsSaved(true);
     } catch (error) {
-      console.error('Save failed:', error);
+      logger.error('Save failed:', error);
     } finally {
       setIsSaving(false);
     }

@@ -8,6 +8,7 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface QuickTaskAddProps {
   noteId: string;
@@ -51,7 +52,7 @@ export const QuickTaskAdd = ({ noteId, onTaskAdded }: QuickTaskAddProps) => {
       setIsOpen(false);
       onTaskAdded?.();
     } catch (error) {
-      console.error('Error adding task:', error);
+      logger.error('Error adding task:', error);
       toast.error('Failed to add task');
     } finally {
       setIsAdding(false);

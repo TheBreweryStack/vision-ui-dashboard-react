@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface OnboardingGuideProps {
   open: boolean;
@@ -96,7 +97,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({
       onOpenChange(false);
       setCurrentStep(0);
     } catch (error) {
-      console.error('Error dismissing onboarding:', error);
+      logger.error('Error dismissing onboarding:', error);
     } finally {
       setIsUpdating(false);
     }
@@ -124,7 +125,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({
       setCurrentStep(0);
       onComplete?.();
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      logger.error('Error completing onboarding:', error);
       toast.error('Failed to save progress');
     } finally {
       setIsUpdating(false);

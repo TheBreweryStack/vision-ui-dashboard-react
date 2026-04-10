@@ -17,6 +17,7 @@ import { AnnouncementsTab } from '@/components/admin/AnnouncementsTab';
 import MarketDataTestPanel from '@/components/admin/MarketDataTestPanel';
 import AICoachDevPanel from '@/components/admin/AICoachDevPanel';
 import UserManagementTab from '@/components/admin/UserManagementTab';
+import { logger } from '@/lib/logger';
 
 interface ExtendedProfile {
   id: string;
@@ -135,7 +136,7 @@ const Admin: React.FC = () => {
         churnedUsers,
       });
     } catch (error) {
-      console.error('Error fetching data:', error);
+      logger.error('Error fetching data:', error);
       toast.error('Failed to load data');
     } finally {
       setIsLoading(false);

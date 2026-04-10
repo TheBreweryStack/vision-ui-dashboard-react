@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { getSourceDisplayName, ParsedTrade } from '@/lib/tradeInbox';
 import { TickerLogo } from '@/components/common/TickerLogo';
+import { logger } from '@/lib/logger';
 
 interface PriceAlert {
   id: string;
@@ -87,7 +88,7 @@ const NotificationSettings: React.FC = () => {
         .limit(20);
       setAlerts((data as PriceAlert[]) || []);
     } catch (error) {
-      console.error('Error fetching alerts:', error);
+      logger.error('Error fetching alerts:', error);
     }
   };
 
@@ -100,7 +101,7 @@ const NotificationSettings: React.FC = () => {
         .limit(10);
       setAnnouncements((data as Announcement[]) || []);
     } catch (error) {
-      console.error('Error fetching announcements:', error);
+      logger.error('Error fetching announcements:', error);
     }
   };
 

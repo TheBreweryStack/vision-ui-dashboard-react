@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { format, addDays, isPast } from 'date-fns';
 import { computeHasFullAccess } from '@/hooks/useAccessControl';
 import { PlanBadge, RoleBadge, UserBadges } from '@/components/common/PlanBadge';
+import { logger } from '@/lib/logger';
 
 interface ExtendedProfile {
   id: string;
@@ -124,7 +125,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
       });
       setFeatureOverrides(overrides);
     } catch (error) {
-      console.error('Error fetching user features:', error);
+      logger.error('Error fetching user features:', error);
     } finally {
       setIsLoading(false);
     }
@@ -202,7 +203,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
         if (error) throw error;
         toast.success('Password reset email sent');
       } catch (error) {
-        console.error('Error resetting password:', error);
+        logger.error('Error resetting password:', error);
         toast.error('Failed to send password reset email');
       } finally {
         setIsResettingPassword(false);
@@ -217,7 +218,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
         if (error) throw error;
         toast.success('2FA has been reset');
       } catch (error) {
-        console.error('Error resetting 2FA:', error);
+        logger.error('Error resetting 2FA:', error);
         toast.error('Failed to reset 2FA');
       } finally {
         setIsResetting2FA(false);
@@ -240,7 +241,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
         toast.success(`Email updated to ${newAdminEmail}`);
         onUpdate?.();
       } catch (error: unknown) {
-        console.error('Error updating email:', error);
+        logger.error('Error updating email:', error);
         toast.error(error.message || 'Failed to update email');
       } finally {
         setIsUpdatingEmail(false);
@@ -303,7 +304,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
         .eq('id', user.id);
 
       if (profileError) {
-        console.error('Profile update error:', profileError);
+        logger.error('Profile update error:', profileError);
         throw profileError;
       }
 
@@ -334,7 +335,7 @@ export const ManageUserModal: React.FC<ManageUserModalProps> = ({
       onUpdate?.();
       onOpenChange(false);
     } catch (error) {
-      console.error('Error updating user:', error);
+      logger.error('Error updating user:', error);
       toast.error('Failed to update user');
     } finally {
       setIsSaving(false);

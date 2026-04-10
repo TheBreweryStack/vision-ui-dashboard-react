@@ -35,6 +35,7 @@ import { supabase } from '@/lib/supabase';
 import { cn, parseDateOnly, isExpiredOption } from '@/lib/utils';
 import { format, startOfWeek } from 'date-fns';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export default function Journal() {
   const location = useLocation();
@@ -191,7 +192,7 @@ export default function Journal() {
       .maybeSingle();
 
     if (error || !fullGroup) {
-      console.error('Failed to load trade details:', error);
+      logger.error('Failed to load trade details:', error);
       return;
     }
 

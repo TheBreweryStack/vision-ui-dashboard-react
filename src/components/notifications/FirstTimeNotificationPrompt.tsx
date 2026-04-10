@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Bell, BellRing, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 // Session-level flag to coordinate with PushNotificationBanner
 declare global {
@@ -61,7 +62,7 @@ export const FirstTimeNotificationPrompt: React.FC = () => {
         .update({ notification_prompt_shown: true })
         .eq('id', user.id);
     } catch (error) {
-      console.error('[FirstTimeNotificationPrompt] Error updating profile:', error);
+      logger.error('[FirstTimeNotificationPrompt] Error updating profile:', error);
     }
   };
 
@@ -80,7 +81,7 @@ export const FirstTimeNotificationPrompt: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('[FirstTimeNotificationPrompt] Error:', error);
+      logger.error('[FirstTimeNotificationPrompt] Error:', error);
       toast.error('Failed to enable notifications');
     } finally {
       await markPromptShown();

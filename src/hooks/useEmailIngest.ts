@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { EmailIngestAddress } from '@/lib/tradeInbox';
+import { logger } from '@/lib/logger';
 
 const INGEST_DOMAIN = 'ingest.tradercafe.app';
 
@@ -36,7 +37,7 @@ export const useEmailIngest = () => {
       if (error) throw error;
       setAddress(data as EmailIngestAddress | null);
     } catch (error) {
-      console.error('Error fetching email ingest address:', error);
+      logger.error('Error fetching email ingest address:', error);
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +74,7 @@ export const useEmailIngest = () => {
       toast.success('Email forwarding address generated!');
       return typedData;
     } catch (error) {
-      console.error('Error generating email address:', error);
+      logger.error('Error generating email address:', error);
       toast.error('Failed to generate email address');
       return null;
     } finally {
@@ -95,7 +96,7 @@ export const useEmailIngest = () => {
       setAddress(prev => prev ? { ...prev, is_active: isActive } : null);
       toast.success(isActive ? 'Email sync enabled' : 'Email sync disabled');
     } catch (error) {
-      console.error('Error toggling email ingest:', error);
+      logger.error('Error toggling email ingest:', error);
       toast.error('Failed to update status');
     }
   };
@@ -114,7 +115,7 @@ export const useEmailIngest = () => {
       // Generate new one
       return await generateAddress();
     } catch (error) {
-      console.error('Error regenerating address:', error);
+      logger.error('Error regenerating address:', error);
       toast.error('Failed to regenerate address');
       return null;
     } finally {

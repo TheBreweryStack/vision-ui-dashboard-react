@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
 
 interface TestResult {
   status: 'idle' | 'loading' | 'success' | 'error';
@@ -55,7 +56,7 @@ const MarketDataTestPanel: React.FC = () => {
           setSelectedTradeId(data[0].id);
         }
       } catch (error) {
-        console.error('Error fetching trades:', error);
+        logger.error('Error fetching trades:', error);
         toast.error('Failed to load trades');
       } finally {
         setIsLoadingTrades(false);

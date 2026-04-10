@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface NotificationPreferences {
   price_alerts: boolean;
@@ -91,7 +92,7 @@ export function useNotificationPreferences() {
       toast.success('Notification preferences saved!');
     },
     onError: (error) => {
-      console.error('Error saving notification preferences:', error);
+      logger.error('Error saving notification preferences:', error);
       toast.error('Failed to save preferences');
     },
   });

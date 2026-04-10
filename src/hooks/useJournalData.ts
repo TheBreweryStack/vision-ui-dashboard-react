@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
+import { logger } from '@/lib/logger';
 
 export interface TradeFill {
   id: string;
@@ -81,7 +82,7 @@ export function useJournalData() {
         groups: journalData?.groups || []
       });
     } catch (err) {
-      console.error('Error fetching journal data:', err);
+      logger.error('Error fetching journal data:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch journal data'));
     } finally {
       setIsLoading(false);

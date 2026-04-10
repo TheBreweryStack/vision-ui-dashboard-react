@@ -16,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Send, Loader2, AlertTriangle, Lightbulb, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface ContactUsDialogProps {
   open: boolean;
@@ -57,7 +58,7 @@ export function ContactUsDialog({ open, onOpenChange }: ContactUsDialogProps) {
       setBody('');
       setRequestType('support');
     } catch (error: unknown) {
-      console.error('Error:', error);
+      logger.error('Error:', error);
       toast.error(error.message || 'Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);

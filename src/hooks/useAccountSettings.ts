@@ -4,6 +4,7 @@ import { supabase, AccountSettings } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 const defaultSettings: Omit<AccountSettings, 'id' | 'user_id' | 'created_at' | 'updated_at'> = {
   starting_balance: 0,
@@ -80,7 +81,7 @@ export const useAccountSettings = () => {
       toast.success('Settings updated!');
     },
     onError: (error) => {
-      console.error('Error updating settings:', error);
+      logger.error('Error updating settings:', error);
       toast.error('Failed to update settings');
     },
   });

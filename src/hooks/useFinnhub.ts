@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 interface Quote {
   price: number;
@@ -56,7 +57,7 @@ export function useFinnhub() {
         setQuotes(prev => ({ ...prev, ...data.data }));
       }
     } catch (err: unknown) {
-      console.error('Failed to fetch quotes:', err);
+      logger.error('Failed to fetch quotes:', err);
       setError(err.message || 'Failed to fetch quotes');
     } finally {
       setIsLoading(false);
@@ -79,7 +80,7 @@ export function useFinnhub() {
         setProfiles(prev => ({ ...prev, ...data.data }));
       }
     } catch (err: unknown) {
-      console.error('Failed to fetch profiles:', err);
+      logger.error('Failed to fetch profiles:', err);
       setError(err.message || 'Failed to fetch profiles');
     } finally {
       setIsLoading(false);
@@ -98,7 +99,7 @@ export function useFinnhub() {
       if (error) throw error;
       setMarketOverview(data);
     } catch (err: unknown) {
-      console.error('Failed to fetch market overview:', err);
+      logger.error('Failed to fetch market overview:', err);
       setError(err.message || 'Failed to fetch market overview');
     } finally {
       setIsLoading(false);

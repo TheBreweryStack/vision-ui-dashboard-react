@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { CheckCircle, Loader2, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 const BillingSuccess: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const BillingSuccess: React.FC = () => {
       // Reload the page to get fresh profile data
       window.location.reload();
     } catch (error) {
-      console.error('Error refreshing status:', error);
+      logger.error('Error refreshing status:', error);
     } finally {
       setIsRefreshing(false);
     }

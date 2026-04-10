@@ -17,6 +17,7 @@ import {
   Table2,
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export type LayoutItem = ReactGridLayout.Layout;
 export type Layouts = { [breakpoint: string]: LayoutItem[] };
@@ -104,7 +105,7 @@ export function useDashboardWidgets() {
         const saved = settings.dashboard_layout as LayoutItem[];
         if (Array.isArray(saved) && saved.length > 0 && saved[0].i) return saved;
       } catch (e) {
-        console.warn('[DashboardWidgets] Failed to parse saved layout, using default:', e);
+        logger.warn('[DashboardWidgets] Failed to parse saved layout, using default:', e);
       }
     }
     return buildDefaultLayout();

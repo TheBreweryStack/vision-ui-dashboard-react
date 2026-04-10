@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, Trade } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export const useTrades = () => {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ export const useTrades = () => {
       if (error) throw error;
       setTrades(data || []);
     } catch (error) {
-      console.error('Error fetching trades:', error);
+      logger.error('Error fetching trades:', error);
       toast.error('Failed to load trades');
     } finally {
       setIsLoading(false);
@@ -74,7 +75,7 @@ export const useTrades = () => {
       toast.success('Trade added successfully!');
       return { data, error: null };
     } catch (error) {
-      console.error('Error adding trade:', error);
+      logger.error('Error adding trade:', error);
       toast.error('Failed to add trade');
       return { data: null, error };
     }
@@ -115,7 +116,7 @@ export const useTrades = () => {
       toast.success('Trade updated!');
       return { data, error: null };
     } catch (error) {
-      console.error('Error updating trade:', error);
+      logger.error('Error updating trade:', error);
       toast.error('Failed to update trade');
       return { data: null, error };
     }
@@ -134,7 +135,7 @@ export const useTrades = () => {
       toast.success('Trade deleted');
       return { error: null };
     } catch (error) {
-      console.error('Error deleting trade:', error);
+      logger.error('Error deleting trade:', error);
       toast.error('Failed to delete trade');
       return { error };
     }

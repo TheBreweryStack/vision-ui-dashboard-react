@@ -16,6 +16,7 @@ import { cn, parseDateOnly } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { TradeGroupWithFills, TradeFill } from '@/hooks/useTradeGroups';
+import { logger } from '@/lib/logger';
 
 interface TradeGroupDetailSheetProps {
   open: boolean;
@@ -84,7 +85,7 @@ export function TradeGroupDetailSheet({ open, onOpenChange, group, onUpdateImage
         toast.success(`${validUrls.length} image(s) uploaded`);
       }
     } catch (error: unknown) {
-      console.error('Image upload error:', error);
+      logger.error('Image upload error:', error);
       toast.error('Failed to upload image');
     } finally {
       setIsUploadingImage(false);
@@ -141,7 +142,7 @@ export function TradeGroupDetailSheet({ open, onOpenChange, group, onUpdateImage
       setEditingFillId(null);
       onRefresh?.();
     } catch (error) {
-      console.error('Error updating fill:', error);
+      logger.error('Error updating fill:', error);
       toast.error('Failed to update fill');
     } finally {
       setIsSavingFill(false);

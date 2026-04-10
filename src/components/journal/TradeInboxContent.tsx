@@ -21,6 +21,7 @@ import {
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface TradeInboxContentProps {
   mode: 'dialog' | 'page';
@@ -132,7 +133,7 @@ export const TradeInboxContent: React.FC<TradeInboxContentProps> = ({
         toast.error(result.message || 'Import failed');
       }
     } catch (error) {
-      console.error('Error importing trade:', error);
+      logger.error('Error importing trade:', error);
       toast.error('Failed to import trade');
     } finally {
       setIsImporting(null);
@@ -185,7 +186,7 @@ export const TradeInboxContent: React.FC<TradeInboxContentProps> = ({
       toast.success('Trade ignored');
       setSelectedItem(null);
     } catch (error) {
-      console.error('Error ignoring trade:', error);
+      logger.error('Error ignoring trade:', error);
     }
   };
 
@@ -195,7 +196,7 @@ export const TradeInboxContent: React.FC<TradeInboxContentProps> = ({
       await updateStatus(item.id, 'pending');
       toast.success('Moved back to pending');
     } catch (error) {
-      console.error('Error undoing:', error);
+      logger.error('Error undoing:', error);
       toast.error('Failed to undo');
     }
   };

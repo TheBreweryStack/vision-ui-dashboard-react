@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 interface RealtimePrice {
   price: number;
@@ -37,7 +38,7 @@ const fetchQuotesREST = async (symbols: string[]): Promise<Record<string, Realti
     }
     return prices;
   } catch (err) {
-    console.error('[FinnhubWS] REST fallback error:', err);
+    logger.error('[FinnhubWS] REST fallback error:', err);
     return {};
   }
 };
@@ -64,7 +65,7 @@ export function useFinnhubWebSocket(): UseFinnhubWebSocketResult {
     if (fallbackIntervalRef.current) return;
     
     usingFallbackRef.current = true;
-    console.log('[FinnhubWS] Starting REST API fallback polling');
+    logger.log('[FinnhubWS] Starting REST API fallback polling');
     
     const poll = async () => {
       const symbols = Array.from(subscribedSymbolsRef.current);
@@ -114,7 +115,7 @@ export function useFinnhubWebSocket(): UseFinnhubWebSocketResult {
       // Handle missing API key gracefully
       if (fnError || data?.code === 'MISSING_API_KEY' || !data?.url) {
         const errorMsg = data?.message || fnError?.message || 'Finnhub API not configured';
-        console.warn('[FinnhubWS] API not available:', errorMsg);
+        logger.warn('[FinnhubWS] API not available:', errorMsg);
         setError(errorMsg);
         setIsConnecting(false);
         // Fall back to REST API
@@ -130,14 +131,14 @@ export function useFinnhubWebSocket(): UseFinnhubWebSocketResult {
       // Set connection timeout - if we don't receive trade data, fall back to REST
       connectionTimeoutRef.current = setTimeout(() => {
         if (!receivedTradeData && ws.readyState === WebSocket.OPEN) {
-          console.warn('[FinnhubWS] No trade data received within timeout, falling back to REST');
+          logger.warn('[FinnhubWS] No trade data received within timeout, falling back to REST');
           ws.close(1000, 'No data received');
           startFallbackPolling();
         }
       }, connectionTimeoutMs);
 
       ws.onopen = () => {
-        console.log('[FinnhubWS] Connected');
+        logger.log('[FinnhubWS] Connected');
         setIsConnected(true);
         setIsConnecting(false);
         setError(null);
@@ -194,17 +195,17 @@ export function useFinnhubWebSocket(): UseFinnhubWebSocketResult {
             ws.send(JSON.stringify({ type: 'pong' }));
           }
         } catch (err) {
-          console.error('[FinnhubWS] Parse error:', err);
+          logger.error('[FinnhubWS] Parse error:', err);
         }
       };
 
       ws.onerror = (event) => {
-        console.error('[FinnhubWS] Error:', event);
+        logger.error('[FinnhubWS] Error:', event);
         setError('WebSocket connection error');
       };
 
       ws.onclose = (event) => {
-        console.log('[FinnhubWS] Disconnected:', event.code, event.reason);
+        logger.log('[FinnhubWS] Disconnected:', event.code, event.reason);
         setIsConnected(false);
         setIsConnecting(false);
         wsRef.current = null;
@@ -228,16 +229,16 @@ export function useFinnhubWebSocket(): UseFinnhubWebSocketResult {
           const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 15000);
           reconnectAttemptsRef.current++;
           
-          console.log(`[FinnhubWS] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
+          logger.log(`[FinnhubWS] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
           reconnectTimeoutRef.current = setTimeout(connect, delay);
         } else if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
           // Max retries reached, fall back to REST
-          console.log('[FinnhubWS] Max reconnect attempts reached, falling back to REST API');
+          logger.log('[FinnhubWS] Max reconnect attempts reached, falling back to REST API');
           startFallbackPolling();
         }
       };
     } catch (err) {
-      console.error('[FinnhubWS] Connection failed:', err);
+      logger.error('[FinnhubWS] Connection failed:', err);
       setError(err instanceof Error ? err.message : 'Connection failed');
       setIsConnecting(false);
       

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolios } from './usePortfolios';
 import { TradeGroup } from './useTradeGroups';
+import { logger } from '@/lib/logger';
 
 /**
  * Lightweight hook that provides only trade group mutation functions.
@@ -49,7 +50,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
     const { data, error } = await query.order('entry_date', { ascending: true }).limit(1);
 
     if (error) {
-      console.error('Error finding matching group:', error);
+      logger.error('Error finding matching group:', error);
       throw new Error(`Failed to search for matching trade group: ${error.message}`);
     }
 
@@ -115,7 +116,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
       onSuccess?.();
       return { error: null };
     } catch (error) {
-      console.error('Error adding to position:', error);
+      logger.error('Error adding to position:', error);
       return { error: error as Error };
     }
   }, [user, onSuccess]);
@@ -198,7 +199,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
       onSuccess?.();
       return { error: null };
     } catch (error) {
-      console.error('Error closing position:', error);
+      logger.error('Error closing position:', error);
       return { error: error as Error };
     }
   }, [user, onSuccess]);
@@ -219,7 +220,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
       onSuccess?.();
       return { error: null };
     } catch (error) {
-      console.error('Error updating trade group:', error);
+      logger.error('Error updating trade group:', error);
       return { error: error as Error };
     }
   }, [onSuccess]);
@@ -237,7 +238,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
       onSuccess?.();
       return { error: null };
     } catch (error) {
-      console.error('Error deleting trade group:', error);
+      logger.error('Error deleting trade group:', error);
       return { error: error as Error };
     }
   }, [onSuccess]);
@@ -338,7 +339,7 @@ export const useTradeGroupMutations = (onSuccess?: () => void) => {
       onSuccess?.();
       return { data: { ...group, status: group.status as 'open' | 'closed' }, error: null };
     } catch (error) {
-      console.error('Error creating trade group:', error);
+      logger.error('Error creating trade group:', error);
       return { data: null, error: error as Error };
     }
   }, [user, activePortfolioId, findMatchingOpenGroup, addToPosition, onSuccess]);

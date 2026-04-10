@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '@/lib/logger';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -58,14 +59,14 @@ export function useInstallPrompt(): UseInstallPromptReturn {
       e.preventDefault();
       // Store the event for later use
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      console.log('[useInstallPrompt] beforeinstallprompt event captured');
+      logger.log('[useInstallPrompt] beforeinstallprompt event captured');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
     // Also listen for successful installation
     window.addEventListener('appinstalled', () => {
-      console.log('[useInstallPrompt] App was installed');
+      logger.log('[useInstallPrompt] App was installed');
       setIsInstalled(true);
       setDeferredPrompt(null);
     });
@@ -78,7 +79,7 @@ export function useInstallPrompt(): UseInstallPromptReturn {
   // Trigger the install prompt
   const promptInstall = useCallback(async (): Promise<boolean> => {
     if (!deferredPrompt) {
-      console.log('[useInstallPrompt] No deferred prompt available');
+      logger.log('[useInstallPrompt] No deferred prompt available');
       return false;
     }
 
@@ -88,7 +89,7 @@ export function useInstallPrompt(): UseInstallPromptReturn {
       
       // Wait for the user's response
       const { outcome } = await deferredPrompt.userChoice;
-      console.log('[useInstallPrompt] User response:', outcome);
+      logger.log('[useInstallPrompt] User response:', outcome);
       
       if (outcome === 'accepted') {
         setIsInstalled(true);
@@ -99,7 +100,7 @@ export function useInstallPrompt(): UseInstallPromptReturn {
       
       return outcome === 'accepted';
     } catch (error) {
-      console.error('[useInstallPrompt] Error prompting install:', error);
+      logger.error('[useInstallPrompt] Error prompting install:', error);
       return false;
     }
   }, [deferredPrompt]);

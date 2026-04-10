@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
 import { TickerLogo } from '@/components/common/TickerLogo';
+import { logger } from '@/lib/logger';
 
 interface Trade {
   id: string;
@@ -94,7 +95,7 @@ const TradeContextDialog: React.FC<TradeContextDialogProps> = ({
         setEnrichment(null);
       }
     } catch (error) {
-      console.error('Error fetching enrichment:', error);
+      logger.error('Error fetching enrichment:', error);
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +119,7 @@ const TradeContextDialog: React.FC<TradeContextDialogProps> = ({
         throw new Error(data.error);
       }
     } catch (error: unknown) {
-      console.error('Error enriching trade:', error);
+      logger.error('Error enriching trade:', error);
       toast.error(error.message || 'Failed to enrich trade');
     } finally {
       setIsEnriching(false);

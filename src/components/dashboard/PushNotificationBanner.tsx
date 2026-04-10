@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { checkBrowserNotificationPermission } from '@/hooks/useLocalAlerts';
+import { logger } from '@/lib/logger';
 
 // Session-level flag to prevent banner showing after dismissal in same session
 declare global {
@@ -66,7 +67,7 @@ export const PushNotificationBanner: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('[PushNotificationBanner] Error enabling:', error);
+      logger.error('[PushNotificationBanner] Error enabling:', error);
       toast.error('Failed to enable notifications');
     }
   };

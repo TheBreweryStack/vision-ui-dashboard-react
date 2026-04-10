@@ -5,6 +5,7 @@ import { getDay, startOfWeek, format, getHours } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
 
 interface WeeklyCloseReminderProps {
   onCloseWeek: () => void;
@@ -85,7 +86,7 @@ export default function WeeklyCloseReminder({ onCloseWeek, isWeekClosed }: Weekl
           .maybeSingle();
         
         if (error) {
-          console.error('Error checking weekly balance:', error);
+          logger.error('Error checking weekly balance:', error);
         }
         
         const alreadyClosed = !!data;
@@ -98,7 +99,7 @@ export default function WeeklyCloseReminder({ onCloseWeek, isWeekClosed }: Weekl
         
         setShouldShow(!alreadyClosed);
       } catch (error) {
-        console.error('Error checking weekly balance:', error);
+        logger.error('Error checking weekly balance:', error);
         // Fallback to localStorage on error
         const closedKey = `weekly-close-completed-${weekKey}`;
         const alreadyClosed = localStorage.getItem(closedKey) === 'true';

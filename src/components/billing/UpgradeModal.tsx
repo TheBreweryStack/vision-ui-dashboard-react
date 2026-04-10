@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Coffee, Sparkles, Crown, Loader2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface UpgradeModalProps {
   open: boolean;
@@ -47,7 +48,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
         throw new Error('No checkout URL returned');
       }
     } catch (error) {
-      console.error('Error creating checkout:', error);
+      logger.error('Error creating checkout:', error);
       toast.error('Failed to start checkout. Please try again.');
     } finally {
       setIsLoading(null);
