@@ -105,8 +105,8 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-ui': [
-            '@supabase/supabase-js',
             '@radix-ui/react-dialog',
             '@radix-ui/react-select',
             '@radix-ui/react-tabs',

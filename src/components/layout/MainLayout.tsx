@@ -7,6 +7,8 @@ import MobileHeader from './MobileHeader';
 import WebFAB from './WebFAB';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
 import { InstallPromptBanner } from '@/components/common/InstallPromptBanner';
+import { OfflineBanner } from '@/components/common/OfflineBanner';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { Loader2 } from 'lucide-react';
 import { useRealtimeNotificationEffects } from '@/hooks/useRealtimeNotificationEffects';
 import { useLocalAlerts } from '@/hooks/useLocalAlerts';
@@ -76,6 +78,9 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="h-screen bg-background overflow-hidden flex">
+      {/* Offline status banner */}
+      <OfflineBanner />
+
       {/* Global Search Command Palette - for keyboard shortcut Cmd+K */}
       <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
       
@@ -95,7 +100,9 @@ const MainLayout: React.FC = () => {
           tabIndex={-1}
         >
           <div className="p-4 lg:p-6 max-w-7xl mx-auto">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
         
