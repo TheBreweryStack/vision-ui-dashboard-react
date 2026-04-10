@@ -5,7 +5,7 @@
   "theme_color": "#080a0f",
   "background_color": "#080a0f",
   "display": "standalone",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "scope": "/",
   "id": "/",
   "orientation": "portrait-primary",
@@ -37,5 +37,25 @@
   ],
   "categories": ["finance", "productivity"],
   "lang": "en",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "New Trade",
+      "short_name": "Trade",
+      "url": "/journal?new=true",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Watchlists",
+      "short_name": "Watch",
+      "url": "/watchlist",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "url": "/analytics",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    }
+  ]
 }

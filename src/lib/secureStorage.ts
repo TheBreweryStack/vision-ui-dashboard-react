@@ -24,6 +24,19 @@ async function deriveKey(): Promise<CryptoKey> {
   );
 }
 
+/** Safe localStorage.setItem with quota-exceeded handling (iOS Safari ~5-10 MB limit) */
+function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    if (e instanceof DOMException && (e.code === 22 || e.name === 'QuotaExceededError')) {
+      // Storage full — silently fail rather than crash; the token simply won't persist
+      return;
+    }
+    throw e;
+  }
+}
+
 export async function secureSet(storageKey: string, value: string): Promise<void> {
   try {
     const key = await deriveKey();
@@ -35,10 +48,10 @@ export async function secureSet(storageKey: string, value: string): Promise<void
       iv: Array.from(iv),
       ct: Array.from(new Uint8Array(ciphertext)),
     });
-    localStorage.setItem(storageKey, payload);
+    safeSetItem(storageKey, payload);
   } catch {
     // Fallback: store as-is if Web Crypto unavailable (e.g. non-secure context)
-    localStorage.setItem(storageKey, value);
+    safeSetItem(storageKey, value);
   }
 }
 

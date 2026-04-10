@@ -304,6 +304,7 @@ const Auth: React.FC = () => {
               <Input
                 id="email"
                 type="email"
+                autoComplete="email"
                 placeholder="trader@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -324,6 +325,7 @@ const Auth: React.FC = () => {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
