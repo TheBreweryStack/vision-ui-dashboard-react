@@ -73,7 +73,7 @@ const BottomNav: React.FC = () => {
       />
 
       {/* Bottom Navigation */}
-      <nav className="lg:hidden bottom-nav">
+      <nav className="lg:hidden bottom-nav" aria-label="Main navigation">
         <div className="grid grid-cols-5 items-center h-[72px] px-3">
           {/* Left side items */}
           {leftItems.map((item) => (
@@ -104,6 +104,7 @@ const BottomNav: React.FC = () => {
           <div className="flex items-center justify-center">
             <button
               onClick={handleAddTrade}
+              aria-label="Add new trade"
               className="w-14 h-14 -mt-7 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg active:scale-95 transition-transform"
               style={{
                 boxShadow: '0 4px 20px hsl(var(--primary) / 0.4)',

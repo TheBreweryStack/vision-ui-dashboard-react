@@ -78,6 +78,14 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="h-screen bg-background overflow-hidden flex">
+      {/* Skip to main content link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[200] focus:top-4 focus:left-4 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
       {/* Offline status banner */}
       <OfflineBanner />
 
@@ -95,7 +103,8 @@ const MainLayout: React.FC = () => {
         <MobileHeader onSearchClick={() => setSearchOpen(true)} />
         
         {/* Main Content - proper mobile bottom padding for FAB + bottom nav */}
-        <main 
+        <main
+          id="main-content"
           className="flex-1 overflow-y-auto pt-[calc(48px+env(safe-area-inset-top))] lg:pt-0 pb-28 lg:pb-0 focus:outline-none"
           tabIndex={-1}
         >

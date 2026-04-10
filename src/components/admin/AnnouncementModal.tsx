@@ -284,6 +284,7 @@ export function AnnouncementModal({ open, onOpenChange, announcement, onSave }: 
                     size="icon"
                     className="h-10 w-10 text-loss hover:text-loss/80"
                     onClick={clearSchedule}
+                    aria-label="Clear schedule"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -342,6 +343,7 @@ export function AnnouncementModal({ open, onOpenChange, announcement, onSave }: 
                     size="icon"
                     className="h-10 w-10 text-loss hover:text-loss/80"
                     onClick={clearExpires}
+                    aria-label="Clear expiration"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -316,6 +316,7 @@ export const CompanyDetailSheet: React.FC<CompanyDetailSheetProps> = ({
               onClick={handleRefresh}
               disabled={isRefreshing}
               title="Refresh data"
+              aria-label="Refresh"
             >
               <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
             </Button>

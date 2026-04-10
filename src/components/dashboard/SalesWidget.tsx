@@ -87,7 +87,7 @@ export const SalesWidget: React.FC = () => {
             <DollarSign className="h-4 w-4 text-profit" />
             Sales
           </h2>
-          <Button variant="ghost" size="icon" onClick={fetchSalesData} className="h-8 w-8">
+          <Button variant="ghost" size="icon" onClick={fetchSalesData} className="h-8 w-8" aria-label="Refresh">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>

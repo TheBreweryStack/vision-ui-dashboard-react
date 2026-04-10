@@ -86,10 +86,11 @@ export const TwoFactorPromptBanner: React.FC = () => {
             </Button>
             
             {!is2FAMandatory && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                aria-label="Dismiss"
                 onClick={handleDismiss}
               >
                 <X className="h-4 w-4" />

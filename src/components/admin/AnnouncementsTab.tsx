@@ -129,7 +129,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           {onBack && (
-            <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9">
+            <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9" aria-label="Go back">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           )}
@@ -229,6 +229,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
                       onClick={() => handleOpenModal(ann)}
                       title="Edit"
+                      aria-label="Edit"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -241,6 +242,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
                       )}
                       onClick={() => handleTogglePin(ann)}
                       title={ann.is_pinned ? "Unpin" : "Pin"}
+                      aria-label={ann.is_pinned ? "Unpin" : "Pin"}
                     >
                       {ann.is_pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
                     </Button>
@@ -250,6 +252,7 @@ export function AnnouncementsTab({ onBack }: AnnouncementsTabProps) {
                       className="h-8 w-8 text-loss hover:text-loss/80"
                       onClick={() => handleDelete(ann.id)}
                       title="Delete"
+                      aria-label="Delete"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

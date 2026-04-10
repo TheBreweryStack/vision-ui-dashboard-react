@@ -266,6 +266,7 @@ const Alerts: React.FC = () => {
                   size="icon"
                   className="h-7 w-7"
                   onClick={() => openModal(reminder)}
+                  aria-label="Edit"
                 >
                   <Edit className="h-3.5 w-3.5" />
                 </Button>
@@ -274,6 +275,7 @@ const Alerts: React.FC = () => {
                   size="icon"
                   className="h-7 w-7 text-loss hover:text-loss"
                   onClick={() => handleDelete(reminder.id)}
+                  aria-label="Delete"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
@@ -480,6 +482,7 @@ const Alerts: React.FC = () => {
                       size="icon"
                       className="h-8 w-8 text-loss hover:text-loss"
                       onClick={() => handleDeleteAlert(alert.id)}
+                      aria-label="Delete"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

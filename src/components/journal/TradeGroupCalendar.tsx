@@ -413,6 +413,7 @@ export function TradeGroupCalendar({ groups, onUpdateImages, onClosePosition }: 
                   size="icon"
                   onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
                   className="h-8 w-8"
+                  aria-label="Previous month"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -439,6 +440,7 @@ export function TradeGroupCalendar({ groups, onUpdateImages, onClosePosition }: 
                   size="icon"
                   onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                   className="h-8 w-8"
+                  aria-label="Next month"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>

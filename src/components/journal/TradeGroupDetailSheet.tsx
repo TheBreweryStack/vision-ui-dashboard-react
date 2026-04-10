@@ -268,6 +268,7 @@ export function TradeGroupDetailSheet({ open, onOpenChange, group, onUpdateImage
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7"
+                            aria-label="Cancel edit"
                             onClick={(e) => {
                               e.stopPropagation();
                               cancelEditFill();
@@ -279,6 +280,7 @@ export function TradeGroupDetailSheet({ open, onOpenChange, group, onUpdateImage
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-profit"
+                            aria-label="Save edit"
                             disabled={isSavingFill}
                             onClick={(e) => {
                               e.stopPropagation();

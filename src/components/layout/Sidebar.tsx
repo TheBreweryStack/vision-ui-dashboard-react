@@ -181,7 +181,7 @@ const SidebarComponent: React.FC = () => {
 
   return (
     <>
-      <aside className="lg:flex flex-col w-64 h-full bg-sidebar/50 backdrop-blur-xl border-r border-sidebar-border/50 absolute inset-0">
+      <aside className="lg:flex flex-col w-64 h-full bg-sidebar/50 backdrop-blur-xl border-r border-sidebar-border/50 absolute inset-0" role="complementary" aria-label="Sidebar">
         {/* Logo */}
         <div className="flex items-center gap-3 p-6">
           <img 
@@ -221,6 +221,7 @@ const SidebarComponent: React.FC = () => {
                   setSearchQuery('');
                 }
               }}
+              aria-label="Search trades and notes"
               className="pl-9 pr-4 w-full bg-accent/50 border-0 rounded-xl text-sm"
             />
             {showSearchResults && searchQuery.length >= 2 && (
@@ -234,7 +235,7 @@ const SidebarComponent: React.FC = () => {
         </div>
         
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-thin">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-thin" aria-label="Main navigation">
           {/* Dashboard */}
           {dashboardItem && (
             <NavLink
@@ -325,6 +326,7 @@ const SidebarComponent: React.FC = () => {
                           className="p-1 rounded hover:bg-accent"
                           onClick={() => { setRenameValue(portfolio.name); setRenamingId(portfolio.id); }}
                           title="Rename"
+                          aria-label={`Rename ${portfolio.name}`}
                         >
                           <Pencil className="h-3 w-3" />
                         </button>
@@ -334,6 +336,7 @@ const SidebarComponent: React.FC = () => {
                               className="p-1 rounded hover:bg-accent"
                               onClick={() => handleArchive(portfolio.id, portfolio.name)}
                               title="Hide"
+                              aria-label={`Hide ${portfolio.name}`}
                             >
                               <EyeOff className="h-3 w-3" />
                             </button>
@@ -341,6 +344,7 @@ const SidebarComponent: React.FC = () => {
                               className="p-1 rounded hover:bg-destructive/20"
                               onClick={() => setDeleteTarget({ id: portfolio.id, name: portfolio.name })}
                               title="Delete"
+                              aria-label={`Delete ${portfolio.name}`}
                             >
                               <Trash2 className="h-3 w-3 text-destructive" />
                             </button>
@@ -372,6 +376,7 @@ const SidebarComponent: React.FC = () => {
                             className="p-1 rounded hover:bg-accent"
                             onClick={() => handleUnarchive(p.id, p.name)}
                             title="Restore"
+                            aria-label={`Restore ${p.name}`}
                           >
                             <RotateCcw className="h-3 w-3" />
                           </button>
@@ -546,17 +551,18 @@ const SidebarComponent: React.FC = () => {
               )}
             </div>
 
-            <NavLink to="/settings">
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <NavLink to="/settings" aria-label="Settings">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" aria-label="Settings">
                 <Settings className="h-4 w-4" />
               </Button>
             </NavLink>
 
             <NotificationDropdown side="right" align="end" sideOffset={12} alignOffset={-8}>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-foreground relative"
+                aria-label={totalPendingCount > 0 ? `Notifications (${totalPendingCount} unread)` : 'Notifications'}
               >
                 <Bell className="h-4 w-4" />
                 {totalPendingCount > 0 && (

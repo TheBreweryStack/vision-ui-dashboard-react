@@ -97,7 +97,7 @@ const Sales: React.FC = () => {
               <SelectItem value="90">Last 90 days</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon" onClick={fetchSalesData} disabled={isLoading}>
+          <Button variant="outline" size="icon" onClick={fetchSalesData} disabled={isLoading} aria-label="Refresh">
             <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
           </Button>
         </div>

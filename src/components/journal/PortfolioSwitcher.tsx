@@ -150,6 +150,7 @@ export function PortfolioSwitcher({ compact = false }: PortfolioSwitcherProps) {
                       setRenamingId(p.id);
                     }}
                     title="Rename"
+                    aria-label={`Rename ${p.name}`}
                   >
                     <Pencil className="h-3 w-3 text-muted-foreground" />
                   </button>
@@ -163,6 +164,7 @@ export function PortfolioSwitcher({ compact = false }: PortfolioSwitcherProps) {
                           setOpen(false);
                         }}
                         title="Hide"
+                        aria-label={`Hide ${p.name}`}
                       >
                         <EyeOff className="h-3 w-3 text-muted-foreground" />
                       </button>
@@ -174,6 +176,7 @@ export function PortfolioSwitcher({ compact = false }: PortfolioSwitcherProps) {
                           setOpen(false);
                         }}
                         title="Delete"
+                        aria-label={`Delete ${p.name}`}
                       >
                         <Trash2 className="h-3 w-3 text-destructive" />
                       </button>
@@ -205,6 +208,7 @@ export function PortfolioSwitcher({ compact = false }: PortfolioSwitcherProps) {
                           className="p-1 rounded hover:bg-accent"
                           onClick={() => { handleUnarchive(p.id, p.name); setOpen(false); }}
                           title="Restore"
+                          aria-label={`Restore ${p.name}`}
                         >
                           <RotateCcw className="h-3 w-3" />
                         </button>

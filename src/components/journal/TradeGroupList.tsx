@@ -184,6 +184,7 @@ export function TradeGroupList({
                         className="h-8 w-8 text-primary hover:text-primary"
                         onClick={() => setDcaGroup(group)}
                         title="Add to Position (DCA)"
+                        aria-label="Add to position"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
@@ -193,6 +194,7 @@ export function TradeGroupList({
                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         onClick={() => setCloseGroup(group)}
                         title="Close Position"
+                        aria-label="Close position"
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -204,7 +206,7 @@ export function TradeGroupList({
               {/* Actions dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="More options">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

@@ -195,7 +195,7 @@ const NotificationSettings: React.FC = () => {
       <div className="page-header">
         <div className="flex items-center gap-3">
           <Link to="/settings">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Go back">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
@@ -412,6 +412,7 @@ const NotificationSettings: React.FC = () => {
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
                           onClick={(e) => { e.stopPropagation(); clearAlert(alert.id); }}
+                          aria-label="Clear alert"
                         >
                           <Check className="h-4 w-4" />
                         </Button>
@@ -752,6 +753,7 @@ const NotificationSettings: React.FC = () => {
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
                           onClick={() => clearAlert(alert.id)}
+                          aria-label="Clear alert"
                         >
                           <Check className="h-4 w-4" />
                         </Button>

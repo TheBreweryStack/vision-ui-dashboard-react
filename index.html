@@ -23,7 +23,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/app-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     
-    <!-- iOS Splash Screens -->
+    <!-- iOS Splash -->
     <meta name="apple-mobile-web-app-orientations" content="portrait" />
     
     <title>TraderCafé - Trading Journal</title>
@@ -40,8 +40,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
 
-  <body>
-    <div id="root"></div>
+  <body style="background-color:#080a0f;color:#f8fafc">
+    <div id="root">
+      <!-- Inline splash: visible instantly, replaced when React mounts -->
+      <div id="splash" style="display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;flex-direction:column;gap:16px">
+        <img src="/app-icon.png" alt="" width="80" height="80" style="border-radius:20px" />
+        <div style="font-family:system-ui,sans-serif;font-size:20px;font-weight:600;color:#f8fafc">TraderCaf&eacute;</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

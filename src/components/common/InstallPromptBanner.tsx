@@ -95,6 +95,7 @@ export const InstallPromptBanner: React.FC = () => {
             variant="ghost"
             size="icon"
             className="h-8 w-8 shrink-0 -mt-1 -mr-2"
+            aria-label="Dismiss"
             onClick={handleDismiss}
           >
             <X className="h-4 w-4" />

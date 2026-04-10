@@ -94,6 +94,7 @@ export const WatchlistItemCard: React.FC<WatchlistItemCardProps> = ({
           <Button
             variant="ghost"
             size="icon"
+            aria-label={alert?.is_active ? "Edit price alert" : "Set price alert"}
             className={cn(
               "h-7 w-7",
               alert?.is_active ? "text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100"
@@ -103,12 +104,12 @@ export const WatchlistItemCard: React.FC<WatchlistItemCardProps> = ({
             {alert?.is_active ? <BellRing className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
           </Button>
           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7"
+            <Button variant="ghost" size="icon" className="h-7 w-7" aria-label="Edit"
               onClick={(e) => { e.stopPropagation(); onOpenEdit(item); }}
             >
               <Edit className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-loss hover:text-loss"
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-loss hover:text-loss" aria-label="Delete"
               onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
             >
               <Trash2 className="h-3.5 w-3.5" />

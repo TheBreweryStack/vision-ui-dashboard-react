@@ -320,6 +320,7 @@ export function NotificationCenter({ onClose, className }: NotificationCenterPro
                 e.stopPropagation();
                 handleDismissTask(task.id);
               }}
+              aria-label="Dismiss"
             >
               <X className="h-3 w-3" />
             </Button>
@@ -426,6 +427,7 @@ export function NotificationCenter({ onClose, className }: NotificationCenterPro
                       e.stopPropagation();
                       handleDismissTask(task.id);
                     }}
+                    aria-label="Dismiss"
                   >
                     <X className="h-3 w-3" />
                   </Button>

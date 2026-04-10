@@ -197,6 +197,7 @@ const Playbook: React.FC = () => {
                 e.stopPropagation();
                 togglePin(note.id, !note.is_pinned);
               }}
+              aria-label={note.is_pinned ? "Unpin" : "Pin"}
             >
               {note.is_pinned ? (
                 <PinOff className="h-3.5 w-3.5" />
@@ -212,6 +213,7 @@ const Playbook: React.FC = () => {
                 e.stopPropagation();
                 openModal(note);
               }}
+              aria-label="Edit"
             >
               <Edit className="h-3.5 w-3.5" />
             </Button>
@@ -223,6 +225,7 @@ const Playbook: React.FC = () => {
                 e.stopPropagation();
                 handleDelete(note.id);
               }}
+              aria-label="Delete"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>

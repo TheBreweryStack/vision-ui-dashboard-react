@@ -291,12 +291,12 @@ const Dashboard: React.FC = () => {
             <div className="flex items-center gap-1 shrink-0">
               {visibleAnnouncements.length > 1 && (
                 <>
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={goToPrevAnnouncement}><ChevronLeft className="h-3 w-3" /></Button>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={goToPrevAnnouncement} aria-label="Previous announcement"><ChevronLeft className="h-3 w-3" /></Button>
                   <span className="text-xs text-muted-foreground">{currentAnnouncementIndex + 1}/{visibleAnnouncements.length}</span>
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={goToNextAnnouncement}><ChevronRight className="h-3 w-3" /></Button>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={goToNextAnnouncement} aria-label="Next announcement"><ChevronRight className="h-3 w-3" /></Button>
                 </>
               )}
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => dismissAnnouncement(currentAnnouncement.id)}><X className="h-3 w-3" /></Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => dismissAnnouncement(currentAnnouncement.id)} aria-label="Dismiss announcement"><X className="h-3 w-3" /></Button>
             </div>
           </div>
         </div>

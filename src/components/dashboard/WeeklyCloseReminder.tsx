@@ -162,6 +162,7 @@ export default function WeeklyCloseReminder({ onCloseWeek, isWeekClosed }: Weekl
         size="icon"
         className="absolute top-2 right-2 h-6 w-6 text-muted-foreground hover:text-foreground"
         onClick={handleDismiss}
+        aria-label="Dismiss"
       >
         <X className="h-4 w-4" />
       </Button>

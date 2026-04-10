@@ -174,6 +174,7 @@ export function NotificationItem({
               onCompleteTask(reminderId, notification.id);
             }}
             title="Complete task"
+            aria-label="Complete task"
           >
             <CheckCircle className="h-3.5 w-3.5 text-profit" />
           </Button>
@@ -189,6 +190,7 @@ export function NotificationItem({
               onDelete(notification.id);
             }}
             title="Dismiss notification"
+            aria-label="Dismiss notification"
           >
             <X className="h-3 w-3" />
           </Button>

@@ -71,6 +71,7 @@ export const QuickTaskAdd = ({ noteId, onTaskAdded }: QuickTaskAddProps) => {
             setIsOpen(true);
           }}
           title="Add task"
+          aria-label="Add task"
         >
           <Plus className="h-3.5 w-3.5" />
         </Button>
@@ -88,6 +89,7 @@ export const QuickTaskAdd = ({ noteId, onTaskAdded }: QuickTaskAddProps) => {
               size="icon"
               className="h-6 w-6"
               onClick={() => setIsOpen(false)}
+              aria-label="Close"
             >
               <X className="h-3.5 w-3.5" />
             </Button>

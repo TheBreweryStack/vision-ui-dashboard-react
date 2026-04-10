@@ -126,17 +126,18 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ onSearchClick }) => {
   };
 
   return (
-    <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30">
+    <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30" role="banner">
       {/* Safe area for notch */}
       <div className="safe-area-top" />
       <div className="flex items-center justify-between h-12 px-4">
         {/* Menu Button */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-11 w-11 -ml-2"
+              aria-label="Open menu"
               onClick={() => haptics.light()}
             >
               <Menu className="h-5 w-5" />
@@ -249,10 +250,11 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ onSearchClick }) => {
         <div className="flex items-center gap-1">
           {/* Update Available */}
           {updateAvailable && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-11 w-11 text-primary relative"
+              aria-label="Update available — tap to refresh"
               onClick={() => {
                 haptics.medium();
                 triggerUpdate();
@@ -264,10 +266,11 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ onSearchClick }) => {
           )}
 
           {/* Search */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-11 w-11"
+            aria-label="Search"
             onClick={() => {
               haptics.light();
               onSearchClick?.();
@@ -278,10 +281,11 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ onSearchClick }) => {
           
           {/* Notifications - Full screen sheet on mobile */}
           <MobileNotificationSheet>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-11 w-11 relative"
+              aria-label={totalPendingCount > 0 ? `Notifications (${totalPendingCount} unread)` : 'Notifications'}
               onClick={() => haptics.light()}
             >
               <Bell className="h-5 w-5" />

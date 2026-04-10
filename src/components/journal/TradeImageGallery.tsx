@@ -178,6 +178,7 @@ export function TradeImageGallery({
                     handleRemoveImage(imageUrl);
                   }}
                   className="absolute top-1 right-1 h-6 w-6 rounded-full bg-background/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-loss/80"
+                  aria-label="Remove image"
                 >
                   <X className="h-3 w-3" />
                 </button>

@@ -199,6 +199,7 @@ export const DepositsModal: React.FC<DepositsModalProps> = ({
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-loss hover:text-loss hover:bg-loss/10"
+                      aria-label="Delete deposit"
                       onClick={() => handleDelete(d.id)}
                     >
                       <Trash2 className="h-4 w-4" />

@@ -178,6 +178,7 @@ export function ShareTradeModal({ open, onOpenChange, trade }: ShareTradeModalPr
                   size="icon"
                   onClick={handleCopy}
                   className="shrink-0"
+                  aria-label="Copy"
                 >
                   {copied ? (
                     <Check className="h-4 w-4 text-profit" />

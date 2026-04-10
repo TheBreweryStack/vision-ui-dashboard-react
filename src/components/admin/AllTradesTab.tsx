@@ -198,7 +198,7 @@ export const AllTradesTab: React.FC = () => {
                   {format(new Date(trade.entry_date), 'MMM d, yyyy')}
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <Button variant="ghost" size="icon" className="h-7 w-7">
+                  <Button variant="ghost" size="icon" className="h-7 w-7" aria-label="View trade">
                     <Eye className="h-3.5 w-3.5" />
                   </Button>
                 </td>

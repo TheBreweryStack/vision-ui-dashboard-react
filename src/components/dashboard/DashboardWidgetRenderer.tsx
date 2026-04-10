@@ -352,8 +352,8 @@ export const DashboardWidgetRenderer: React.FC<DashboardWidgetRendererProps> = (
                     </div>
                   </div>
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDcaGroup(group)} title="Add Contracts"><Plus className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onCloseGroup(group)} title="Close Position"><X className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDcaGroup(group)} title="Add Contracts" aria-label="Add Contracts"><Plus className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onCloseGroup(group)} title="Close Position" aria-label="Close Position"><X className="h-4 w-4" /></Button>
                     <span className="badge-profit text-xs">Open</span>
                   </div>
                 </div>

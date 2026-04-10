@@ -95,11 +95,12 @@ export const PushNotificationBanner: React.FC = () => {
             'Enable'
           )}
         </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="h-8 w-8"
           onClick={() => setIsDismissed(true)}
+          aria-label="Dismiss"
         >
           <X className="h-4 w-4" />
         </Button>

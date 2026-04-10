@@ -306,6 +306,7 @@ export default function Journal() {
             onClick={() => setShowSettingsModal(true)}
             className="btn-glass border-0"
             title="Account Settings"
+            aria-label="Account Settings"
           >
             <Settings className="h-4 w-4" />
           </Button>
@@ -317,6 +318,7 @@ export default function Journal() {
                   size="icon"
                   className="relative btn-glass border-0"
                   title="Trade Inbox"
+                  aria-label="Trade Inbox"
                 >
                   <Inbox className="h-4 w-4" />
                   {(inboxCounts.pending + inboxCounts.needs_review) > 0 && (
@@ -333,6 +335,7 @@ export default function Journal() {
               size="icon"
               className="relative btn-glass border-0 opacity-60"
               title="Trade Inbox (Pro)"
+              aria-label="Trade Inbox (Pro)"
               onClick={() => {
                 setUpgradeFeature('Email Trade Import');
                 setShowUpgradeModal(true);
@@ -391,6 +394,7 @@ export default function Journal() {
             onClick={() => setShowSettingsModal(true)}
             className="btn-glass border-0 h-8 w-8 shrink-0"
             title="Account Settings"
+            aria-label="Account Settings"
           >
             <Settings className="h-3.5 w-3.5" />
           </Button>

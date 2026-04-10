@@ -282,8 +282,7 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
     const deviceLabel = generateDeviceLabel(deviceMetadata);
 
     // 8. Insert new subscription with device_id and metadata
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const insertData: any = {
+    const { error: insertError } = await supabase.from("push_subscriptions").insert({
       user_id: userId,
       endpoint,
       p256dh,
@@ -291,9 +290,8 @@ export async function subscribeToPushNotifications(userId: string): Promise<bool
       vapid_key_hash: getVapidKeyHash(VAPID_PUBLIC_KEY),
       device_id: deviceId,
       device_label: deviceLabel,
-      device_metadata: deviceMetadata,
-    };
-    const { error: insertError } = await supabase.from("push_subscriptions").insert(insertData);
+      device_metadata: deviceMetadata as Record<string, unknown>,
+    });
 
     if (insertError) {
       throw insertError;

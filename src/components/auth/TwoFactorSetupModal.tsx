@@ -179,6 +179,7 @@ export function TwoFactorSetupModal({ open, onOpenChange, onComplete }: TwoFacto
                     variant="outline"
                     size="icon"
                     onClick={handleCopySecret}
+                    aria-label="Copy"
                   >
                     {copied ? (
                       <Check className="h-4 w-4 text-primary" />

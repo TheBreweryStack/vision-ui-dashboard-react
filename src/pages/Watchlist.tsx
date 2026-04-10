@@ -390,12 +390,13 @@ const Watchlist: React.FC = () => {
             </div>
           )}
           {items.length > 0 && (
-            <Button 
+            <Button
               variant="outline"
               size="sm"
               onClick={handleRefreshQuotes}
               disabled={quotesLoading}
               className="btn-glass border-0 h-9"
+              aria-label="Refresh quotes"
             >
               <RefreshCw className={cn("h-4 w-4", quotesLoading && "animate-spin")} />
             </Button>
@@ -469,6 +470,7 @@ const Watchlist: React.FC = () => {
                 activeWatchlist.is_default && "text-primary"
               )}
               title={activeWatchlist.is_default ? "Default watchlist" : "Set as default"}
+              aria-label={activeWatchlist.is_default ? "Default watchlist" : "Set as default"}
             >
               <Star className={cn("h-4 w-4", activeWatchlist.is_default && "fill-current")} />
             </Button>
@@ -477,6 +479,7 @@ const Watchlist: React.FC = () => {
               size="icon"
               onClick={() => handleDeleteWatchlist(activeWatchlist.id)}
               className="text-muted-foreground hover:text-loss"
+              aria-label="Delete watchlist"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

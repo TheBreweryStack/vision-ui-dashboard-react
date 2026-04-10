@@ -253,24 +253,25 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
               ) : null}
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleManualSave} title="Save">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleManualSave} title="Save" aria-label="Save">
                 <Save className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8" title="Share">
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="Share" aria-label="Share">
                 <Share2 className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8"
                 onClick={() => onTogglePin(note.id, !note.is_pinned)}
                 title={note.is_pinned ? "Unpin" : "Pin"}
+                aria-label={note.is_pinned ? "Unpin" : "Pin"}
               >
                 <Pin className={cn("h-4 w-4", note.is_pinned && "fill-current text-primary")} />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 text-loss hover:text-loss hover:bg-loss/10"
                 onClick={() => {
                   if (confirm('Delete this note?')) {
@@ -279,15 +280,17 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
                   }
                 }}
                 title="Delete"
+                aria-label="Delete"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8"
                 onClick={() => onOpenChange(false)}
                 title="Close"
+                aria-label="Close"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -342,39 +345,43 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
 
           {/* Editor Toolbar */}
           <div className="flex items-center gap-1 p-2 rounded-lg bg-secondary/30 border border-border/50">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8"
               onClick={() => insertMarkdown('**', '**')}
               title="Bold (Ctrl+B)"
+              aria-label="Bold"
             >
               <Bold className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8"
               onClick={() => insertMarkdown('*', '*')}
               title="Italic"
+              aria-label="Italic"
             >
               <Italic className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8"
               onClick={() => insertMarkdown('## ')}
               title="Heading"
+              aria-label="Heading"
             >
               <Heading2 className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8"
               onClick={() => insertMarkdown('- ')}
               title="List"
+              aria-label="List"
             >
               <List className="h-4 w-4" />
             </Button>
@@ -437,7 +444,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
                 placeholder="Paste image URL..."
                 className="h-8 bg-secondary/50 border-border/50 flex-1"
               />
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={addImage}>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={addImage} aria-label="Add image">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -453,6 +460,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
                       size="icon"
                       className="absolute -top-2 -right-2 h-5 w-5 bg-loss text-white opacity-0 group-hover:opacity-100"
                       onClick={() => removeImage(i)}
+                      aria-label="Remove image"
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -476,7 +484,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
                 placeholder="Add a link..."
                 className="h-8 bg-secondary/50 border-border/50 flex-1"
               />
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={addLink}>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={addLink} aria-label="Add link">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -528,6 +536,7 @@ export const NoteDetailSheet: React.FC<NoteDetailSheetProps> = ({
                         size="icon"
                         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => removeLink(i)}
+                        aria-label="Remove link"
                       >
                         <X className="h-3 w-3" />
                       </Button>

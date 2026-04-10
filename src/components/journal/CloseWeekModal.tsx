@@ -333,6 +333,7 @@ export const CloseWeekModal: React.FC<CloseWeekModalProps> = ({
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6"
+                            aria-label="Edit week"
                             onClick={() => {/* Edit functionality */}}
                           >
                             <Edit className="h-3 w-3" />
@@ -341,6 +342,7 @@ export const CloseWeekModal: React.FC<CloseWeekModalProps> = ({
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 text-loss hover:text-loss"
+                            aria-label="Delete week"
                             onClick={() => handleDeleteWeek(week.id)}
                           >
                             <Trash2 className="h-3 w-3" />

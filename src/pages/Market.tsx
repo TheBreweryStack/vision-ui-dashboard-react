@@ -213,12 +213,13 @@ const Market: React.FC = () => {
         </div>
         <div className="flex items-center gap-2 md:gap-3">
           {marketOverview && getMarketStatusBadge()}
-          <Button 
+          <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={isLoading}
             className="btn-glass border-0 h-9"
+            aria-label="Refresh"
           >
             <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
           </Button>
@@ -241,6 +242,7 @@ const Market: React.FC = () => {
               <button
                 onClick={clearSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -408,7 +410,7 @@ const Market: React.FC = () => {
                 {dateFilter && (
                   <Badge variant="secondary" className="text-xs ml-2">
                     {format(dateFilter, 'MMM d, yyyy')}
-                    <button onClick={clearDateFilter} className="ml-1 hover:text-foreground">
+                    <button onClick={clearDateFilter} className="ml-1 hover:text-foreground" aria-label="Clear date filter">
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
@@ -450,6 +452,7 @@ const Market: React.FC = () => {
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
                     className="h-8 w-8 p-0"
+                    aria-label="Previous page"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -462,6 +465,7 @@ const Market: React.FC = () => {
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages || totalPages === 0}
                     className="h-8 w-8 p-0"
+                    aria-label="Next page"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>

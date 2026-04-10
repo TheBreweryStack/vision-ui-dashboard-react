@@ -180,6 +180,7 @@ export const EmailSyncSettings: React.FC = () => {
                       variant="outline"
                       onClick={() => handleCopyCode(confirmationCode)}
                       className="shrink-0"
+                      aria-label="Copy code"
                     >
                       {codeCopied ? <Check className="h-4 w-4 text-profit" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -211,6 +212,7 @@ export const EmailSyncSettings: React.FC = () => {
                 variant="outline"
                 onClick={handleCopy}
                 className="shrink-0"
+                aria-label="Copy email address"
               >
                 {copied ? <Check className="h-4 w-4 text-profit" /> : <Copy className="h-4 w-4" />}
               </Button>
